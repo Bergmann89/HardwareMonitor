@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="9"/>
+    <PathDelim Value="\"/>
+    <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <Title Value="download"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <VersionInfo>
+      <StringTable ProductVersion=""/>
+    </VersionInfo>
+    <BuildModes Count="1" Active="Default">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <HostApplicationFilename Value="G:\Eigene Datein\Delphi Projekte\_Active Projekte\HardwareDisplay\Programm\HardwareMonitor.exe"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="1">
+      <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+    </RequiredPackages>
+    <Units Count="8">
+      <Unit0>
+        <Filename Value="download.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="download"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="49"/>
+        <CursorPos X="43" Y="70"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="uDownload.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uDownload"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="195"/>
+        <CursorPos X="38" Y="206"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="C:\Users\Erik\uUSBDisplay.pas"/>
+        <UnitName Value="uUSBDisplay"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="16" Y="8"/>
+        <UsageCount Value="10"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="C:\Users\Erik\uHardwareMonitor.pas"/>
+        <UnitName Value="uHardwareMonitor"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="210"/>
+        <CursorPos X="1" Y="234"/>
+        <UsageCount Value="10"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="C:\Users\Erik\uModulAPI.pas"/>
+        <UnitName Value="uModulAPI"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="43"/>
+        <CursorPos X="14" Y="58"/>
+        <UsageCount Value="12"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="C:\Users\Erik\HardwareMonitor.lpr"/>
+        <UnitName Value="HardwareMonitor"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="15"/>
+        <UsageCount Value="12"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\inc\objpash.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="226"/>
+        <CursorPos X="20" Y="241"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="C:\Users\Erik\gdiplus\GDIPOBJ.pas"/>
+        <UnitName Value="GDIPOBJ"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1124"/>
+        <CursorPos X="14" Y="1139"/>
+        <UsageCount Value="11"/>
+      </Unit7>
+    </Units>
+    <JumpHistory Count="22" HistoryIndex="21">
+      <Position1>
+        <Filename Value="download.pas"/>
+        <Caret Line="24" Column="14" TopLine="10"/>
+      </Position1>
+      <Position2>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="12" Column="7" TopLine="1"/>
+      </Position2>
+      <Position3>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="368" Column="21" TopLine="101"/>
+      </Position3>
+      <Position4>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="12" Column="12" TopLine="1"/>
+      </Position4>
+      <Position5>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="123" Column="29" TopLine="113"/>
+      </Position5>
+      <Position6>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="181" Column="44" TopLine="166"/>
+      </Position6>
+      <Position7>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="255" Column="52" TopLine="239"/>
+      </Position7>
+      <Position8>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="8" Column="12" TopLine="1"/>
+      </Position8>
+      <Position9>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="60" Column="13" TopLine="35"/>
+      </Position9>
+      <Position10>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="110" Column="25" TopLine="85"/>
+      </Position10>
+      <Position11>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="111" Column="37" TopLine="89"/>
+      </Position11>
+      <Position12>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="107" Column="10" TopLine="92"/>
+      </Position12>
+      <Position13>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="184" Column="36" TopLine="159"/>
+      </Position13>
+      <Position14>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="252" Column="17" TopLine="227"/>
+      </Position14>
+      <Position15>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="310" Column="1" TopLine="289"/>
+      </Position15>
+      <Position16>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="311" Column="1" TopLine="289"/>
+      </Position16>
+      <Position17>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="312" Column="1" TopLine="289"/>
+      </Position17>
+      <Position18>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="313" Column="1" TopLine="289"/>
+      </Position18>
+      <Position19>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="260" Column="11" TopLine="244"/>
+      </Position19>
+      <Position20>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="43" Column="21" TopLine="31"/>
+      </Position20>
+      <Position21>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="253" Column="29" TopLine="245"/>
+      </Position21>
+      <Position22>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="42" Column="18" TopLine="27"/>
+      </Position22>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="9"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="..\download"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\..;..\..\gdiplus"/>
+      <UnitOutputDirectory Value="..\..\..\lib\modules\upload\$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <CodeGeneration>
+      <TargetCPU Value="i386"/>
+      <TargetOS Value="win32"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseHeaptrc Value="True"/>
+      </Debugging>
+      <Options>
+        <ExecutableType Value="Library"/>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerMessages>
+        <UseMsgFile Value="True"/>
+      </CompilerMessages>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Watches Count="1">
+      <Item1>
+        <Expression Value="fDataArr^[id]"/>
+      </Item1>
+    </Watches>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

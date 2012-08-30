@@ -1,0 +1,387 @@
+object MainForm: TMainForm
+  Left = 1106
+  Height = 704
+  Top = 165
+  Width = 728
+  Caption = 'HardwareMonitor'
+  ClientHeight = 704
+  ClientWidth = 728
+  KeyPreview = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
+  Position = poScreenCenter
+  LCLVersion = '0.9.30.4'
+  object PreviewPanel: TPanel
+    Left = 4
+    Height = 276
+    Top = 4
+    Width = 484
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    ClientHeight = 272
+    ClientWidth = 480
+    TabOrder = 0
+    object PreviewPB: TPaintBox
+      Left = 0
+      Height = 272
+      Top = 0
+      Width = 480
+      Align = alClient
+      OnDblClick = PreviewPBDblClick
+      OnMouseDown = PreviewPBMouseDown
+      OnMouseMove = PreviewPBMouseMove
+      OnMouseUp = PreviewPBMouseUp
+      OnPaint = PreviewPBPaint
+    end
+  end
+  object DisplaysGroup: TGroupBox
+    Left = 492
+    Height = 128
+    Top = 432
+    Width = 232
+    Anchors = [akRight, akBottom]
+    Caption = 'verfügbare Displays:'
+    ClientHeight = 110
+    ClientWidth = 228
+    TabOrder = 1
+    object DisplaysCLB: TCheckListBox
+      Left = 2
+      Height = 106
+      Top = 2
+      Width = 224
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      ItemHeight = 0
+      OnClick = DisplaysCLBClick
+      OnClickCheck = DisplaysCLBClickCheck
+      TabOrder = 0
+    end
+  end
+  object ModulInfoGroup: TGroupBox
+    Left = 492
+    Height = 137
+    Top = 285
+    Width = 232
+    Anchors = [akRight, akBottom]
+    Caption = 'Modul Info:'
+    ClientHeight = 119
+    ClientWidth = 228
+    TabOrder = 2
+    object Label1: TLabel
+      Left = 6
+      Height = 16
+      Top = 8
+      Width = 36
+      Caption = 'Name:'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 6
+      Height = 16
+      Top = 80
+      Width = 34
+      Caption = 'Autor:'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 6
+      Height = 16
+      Top = 96
+      Width = 33
+      Caption = 'eMail:'
+      ParentColor = False
+    end
+    object Label4: TLabel
+      Left = 6
+      Height = 16
+      Top = 40
+      Width = 43
+      Caption = 'Version:'
+      ParentColor = False
+    end
+    object Label5: TLabel
+      Left = 6
+      Height = 16
+      Top = 56
+      Width = 25
+      Caption = 'Jahr:'
+      ParentColor = False
+    end
+    object Label6: TLabel
+      Left = 6
+      Height = 16
+      Top = 24
+      Width = 31
+      Caption = 'Datei:'
+      ParentColor = False
+    end
+    object ModNameLab: TLabel
+      Left = 54
+      Height = 1
+      Top = 8
+      Width = 1
+      ParentColor = False
+    end
+    object ModFileLab: TLabel
+      Left = 54
+      Height = 1
+      Top = 24
+      Width = 1
+      ParentColor = False
+    end
+    object ModVersionLab: TLabel
+      Left = 54
+      Height = 1
+      Top = 40
+      Width = 1
+      ParentColor = False
+    end
+    object ModYearLab: TLabel
+      Left = 54
+      Height = 1
+      Top = 56
+      Width = 1
+      ParentColor = False
+    end
+    object ModAutorLab: TLabel
+      Left = 54
+      Height = 1
+      Top = 80
+      Width = 1
+      ParentColor = False
+    end
+    object ModMailLab: TLabel
+      Cursor = crHandPoint
+      Left = 54
+      Height = 1
+      Top = 96
+      Width = 1
+      Font.Color = clBlue
+      Font.Style = [fsUnderline]
+      ParentColor = False
+      ParentFont = False
+      OnClick = ModMailLabClick
+    end
+  end
+  object DisplayInfoGroup: TGroupBox
+    Left = 492
+    Height = 108
+    Top = 560
+    Width = 232
+    Anchors = [akRight, akBottom]
+    Caption = 'Display Info:'
+    ClientHeight = 90
+    ClientWidth = 228
+    TabOrder = 3
+    object Label7: TLabel
+      Left = 6
+      Height = 16
+      Top = 8
+      Width = 36
+      Caption = 'Name:'
+      ParentColor = False
+    end
+    object Label8: TLabel
+      Left = 6
+      Height = 16
+      Top = 24
+      Width = 43
+      Caption = 'Version:'
+      ParentColor = False
+    end
+    object Label9: TLabel
+      Left = 6
+      Height = 16
+      Top = 40
+      Width = 34
+      Caption = 'Breite:'
+      ParentColor = False
+    end
+    object Label10: TLabel
+      Left = 6
+      Height = 16
+      Top = 56
+      Width = 33
+      Caption = 'Höhe:'
+      ParentColor = False
+    end
+    object Label11: TLabel
+      Left = 6
+      Height = 16
+      Top = 72
+      Width = 32
+      Caption = 'Serial:'
+      ParentColor = False
+    end
+    object DispSerialLab: TLabel
+      Left = 54
+      Height = 1
+      Top = 72
+      Width = 1
+      ParentColor = False
+    end
+    object DispNameLab: TLabel
+      Left = 54
+      Height = 1
+      Top = 8
+      Width = 1
+      ParentColor = False
+    end
+    object DispVersionLab: TLabel
+      Left = 54
+      Height = 1
+      Top = 24
+      Width = 1
+      ParentColor = False
+    end
+    object DispWidthLab: TLabel
+      Left = 54
+      Height = 1
+      Top = 40
+      Width = 1
+      ParentColor = False
+    end
+    object DispHeightLab: TLabel
+      Left = 54
+      Height = 1
+      Top = 56
+      Width = 1
+      ParentColor = False
+    end
+  end
+  object SettingsGroup: TGroupBox
+    Left = 4
+    Height = 415
+    Top = 285
+    Width = 484
+    Anchors = [akLeft, akRight, akBottom]
+    Caption = 'Einstellungen:'
+    ClientHeight = 397
+    ClientWidth = 480
+    TabOrder = 4
+    object SettingsVST: TVirtualStringTree
+      Left = 2
+      Height = 391
+      Top = 4
+      Width = 476
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      Color = clWhite
+      DefaultText = 'Node'
+      Header.AutoSizeIndex = 0
+      Header.Columns = <      
+        item
+          MinWidth = 50
+          Position = 0
+          Text = 'Eigenschaft'
+          Width = 200
+        end      
+        item
+          MinWidth = 50
+          Position = 1
+          Text = 'Wert'
+          Width = 260
+        end>
+      Header.DefaultHeight = 17
+      Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
+      TabOrder = 0
+      TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+      TreeOptions.SelectionOptions = [toExtendedFocus, toFullRowSelect, toRightClickSelect]
+      OnDblClick = SettingsVSTDblClick
+      OnEditCancelled = SettingsVSTEditCancelled
+      OnEdited = SettingsVSTEdited
+      OnEditing = SettingsVSTEditing
+      OnFreeNode = SettingsVSTFreeNode
+      OnGetText = SettingsVSTGetText
+      OnNewText = SettingsVSTNewText
+    end
+  end
+  object ModulesGroup: TGroupBox
+    Left = 492
+    Height = 276
+    Top = 4
+    Width = 232
+    Anchors = [akTop, akRight, akBottom]
+    Caption = 'Module:'
+    ClientHeight = 258
+    ClientWidth = 228
+    TabOrder = 5
+    object ModulesLB: TListBox
+      Left = 2
+      Height = 104
+      Top = 4
+      Width = 224
+      Anchors = [akTop, akLeft, akRight]
+      ItemHeight = 0
+      OnClick = ModulesLBClick
+      TabOrder = 0
+    end
+    object ActiveModulesLB: TListBox
+      Left = 2
+      Height = 116
+      Top = 136
+      Width = 224
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      ItemHeight = 0
+      OnClick = ActiveModulesLBClick
+      OnDblClick = ActiveModulesLBDblClick
+      TabOrder = 1
+    end
+    object AddModulBt: TButton
+      Left = 6
+      Height = 25
+      Top = 109
+      Width = 107
+      Caption = 'aktivieren'
+      OnClick = AddModulBtClick
+      TabOrder = 2
+    end
+    object DelModulBt: TButton
+      Left = 115
+      Height = 25
+      Top = 109
+      Width = 107
+      Caption = 'deaktivieren'
+      OnClick = DelModulBtClick
+      TabOrder = 3
+    end
+  end
+  object SaveSettingsBt: TButton
+    Left = 608
+    Height = 25
+    Top = 672
+    Width = 116
+    Caption = 'speichern'
+    OnClick = SaveSettingsBtClick
+    TabOrder = 6
+  end
+  object LoadSettingsBt: TButton
+    Left = 492
+    Height = 25
+    Top = 672
+    Width = 116
+    Caption = 'laden'
+    OnClick = LoadSettingsBtClick
+    TabOrder = 7
+  end
+  object OpenDialog: TOpenDialog
+    left = 48
+    top = 24
+  end
+  object OpenPicDialog: TOpenPictureDialog
+    Filter = 'Grafik (*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.jfif)|*.bmp;*.png;*.jpg;*.jpeg|Bitmaps (*.bmp)|*.bmp|Portable Network Graphic (*.png)|*.png|Joint Picture Expert Group (*.jpg;*.jpeg;*.jpe;*.jfif)|*.jpg;*.jpeg;*.jpe;*.jfif|Alle Dateien (*.*)|*.*'
+    left = 49
+    top = 80
+  end
+  object FontDialog: TFontDialog
+    MinFontSize = 0
+    MaxFontSize = 0
+    left = 128
+    top = 24
+  end
+  object SaveDialog: TSaveDialog
+    left = 128
+    top = 80
+  end
+end

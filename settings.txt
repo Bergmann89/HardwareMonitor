@@ -1,0 +1,102 @@
+Background = 'G:\Eigene Datein\Delphi Projekte\_Active Projekte\HardwareDisplay\Programm\background.png';
+RefreshRate = 1000;
+DisplaySerial = 1112080015;
+Modul000:
+  Name = 'Clock 1.0.0';
+  LibName = 'clock.dll';
+  LibVersion = '1.0.0';
+  Position:
+    x = 5;
+    y = 6;
+  end;
+  SmallSize:
+    x = 260;
+    y = 104;
+  end;
+  Modul:
+    Datumsformat = 'ddd dd. mmm yy';
+    GrÃ¶ÃŸe_der_Sec__Anzeige = '0.5';
+    GrÃ¶ÃŸe_der_Datum_Anzeige = '0.4';
+    Hintergrundfarbe = 1610612736;
+    Font:
+      Name = Arial;
+      Color = 4294967295;
+      Size = 0;
+      Style = 0;
+    end;
+  end;
+end;
+Modul001:
+  Name = 'CPU Load 1.0.0';
+  LibName = 'cpu_load.dll';
+  LibVersion = '1.0.0';
+  Position:
+    x = 340;
+    y = 9;
+  end;
+  SmallSize:
+    x = 131;
+    y = 249;
+  end;
+  Modul:
+    Farbe = 4278190079;
+    Prim__Hintergrundfarbe = 1610612736;
+    Sek__Hintergrundfarbe = 1627389951;
+    Diagramm_autom__anpassen = 0;
+    Datenabstand = -1379995901;
+    Font:
+      Name = Arial;
+      Color = 4278190079;
+      Size = 12;
+      Style = 1;
+    end;
+  end;
+end;
+Modul002:
+  Name = 'Netzwerk Download 1.0.0';
+  LibName = 'download.dll';
+  LibVersion = '1.0.0';
+  Position:
+    x = 7;
+    y = 116;
+  end;
+  SmallSize:
+    x = 128;
+    y = 147;
+  end;
+  Modul:
+    Farbe = 1694498815;
+    Hintergrundfarbe = 1610612736;
+    Liniendiagramm = 1;
+    Font:
+      Name = ððððððï¾­ÞÞÞððððï¾­ÞaÀù0GF;
+      Color = 4278190079;
+      Size = 12;
+      Style = 1;
+    end;
+  end;
+end;
+Modul003:
+  Name = 'Netzwerk Upload 1.0.0';
+  LibName = 'upload.dll';
+  LibVersion = '1.0.0';
+  Position:
+    x = 147;
+    y = 115;
+  end;
+  SmallSize:
+    x = 138;
+    y = 147;
+  end;
+  Modul:
+    Farbe = 1694498815;
+    Hintergrundfarbe = 1610612736;
+    Liniendiagramm = 1;
+    Font:
+      Name = ððððððï¾­ÞÞÞððððï¾­ÞaÀ%;
+      Color = 4278190079;
+      Size = 12;
+      Style = 1;
+    end;
+  end;
+end;

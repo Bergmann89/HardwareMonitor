@@ -1,0 +1,376 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="9"/>
+    <PathDelim Value="\"/>
+    <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <VersionInfo>
+      <StringTable ProductVersion=""/>
+    </VersionInfo>
+    <BuildModes Count="1" Active="Default">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <HostApplicationFilename Value="G:\Eigene Datein\Delphi Projekte\_Active Projekte\HardwareDisplay\Programm\HardwareMonitor.exe"/>
+        <LaunchingApplication Use="True"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="1">
+      <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+    </RequiredPackages>
+    <Units Count="18">
+      <Unit0>
+        <Filename Value="clock.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="clock"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="43"/>
+        <CursorPos X="24" Y="54"/>
+        <UsageCount Value="75"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="..\..\gdiplus\GDIPOBJ.pas"/>
+        <UnitName Value="GDIPOBJ"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="226"/>
+        <CursorPos X="20" Y="242"/>
+        <UsageCount Value="26"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\..\gdiplus\GDIPAPI.pas"/>
+        <UnitName Value="GDIPAPI"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="634"/>
+        <CursorPos X="1" Y="643"/>
+        <UsageCount Value="27"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\..\gdiplus\DirectDraw.pas"/>
+        <UnitName Value="DirectDraw"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="7131"/>
+        <CursorPos X="13" Y="7158"/>
+        <UsageCount Value="11"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\..\uGdiUtils.pas"/>
+        <UnitName Value="uGdiUtils"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="11"/>
+        <UsageCount Value="51"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\..\gdiplus\GDIPUTIL.pas"/>
+        <UnitName Value="GDIPUTIL"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="9"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\graphics.pp"/>
+        <UnitName Value="Graphics"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="49"/>
+        <CursorPos X="3" Y="64"/>
+        <UsageCount Value="9"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\win\wininc\struct.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="208"/>
+        <CursorPos X="16" Y="219"/>
+        <UsageCount Value="10"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\win\wininc\defines.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="37"/>
+        <CursorPos X="6" Y="52"/>
+        <UsageCount Value="8"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="..\..\uHardwareMonitor.pas"/>
+        <UnitName Value="uHardwareMonitor"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="44"/>
+        <CursorPos X="14" Y="53"/>
+        <UsageCount Value="15"/>
+        <Loaded Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\..\HardwareMonitor.lpr"/>
+        <UnitName Value="HardwareMonitor"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="16"/>
+        <UsageCount Value="11"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\objpas\sysutils\datih.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="127"/>
+        <CursorPos X="24" Y="146"/>
+        <UsageCount Value="8"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\inc\objpash.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="177"/>
+        <CursorPos X="23" Y="192"/>
+        <UsageCount Value="8"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="uClock.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uClock"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="216"/>
+        <CursorPos X="1" Y="226"/>
+        <UsageCount Value="38"/>
+        <Loaded Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uModulAPI"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="41"/>
+        <CursorPos X="17" Y="55"/>
+        <UsageCount Value="38"/>
+        <Loaded Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\objpas\objpas.pp"/>
+        <UnitName Value="objpas"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="13"/>
+        <CursorPos X="8" Y="28"/>
+        <UsageCount Value="10"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\win\wininc\base.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="52"/>
+        <CursorPos X="6" Y="67"/>
+        <UsageCount Value="10"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <UnitName Value="uUSBDisplay"/>
+        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="206"/>
+        <CursorPos X="12" Y="113"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit17>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="221" Column="1" TopLine="195"/>
+      </Position1>
+      <Position2>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="47" Column="30" TopLine="26"/>
+      </Position2>
+      <Position3>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="223" Column="25" TopLine="215"/>
+      </Position3>
+      <Position4>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="102" Column="16" TopLine="83"/>
+      </Position4>
+      <Position5>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="106" Column="44" TopLine="83"/>
+      </Position5>
+      <Position6>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="96" Column="43" TopLine="83"/>
+      </Position6>
+      <Position7>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="116" Column="43" TopLine="87"/>
+      </Position7>
+      <Position8>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="97" Column="1" TopLine="88"/>
+      </Position8>
+      <Position9>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="107" Column="20" TopLine="88"/>
+      </Position9>
+      <Position10>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="108" Column="1" TopLine="88"/>
+      </Position10>
+      <Position11>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="109" Column="1" TopLine="88"/>
+      </Position11>
+      <Position12>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="131" Column="55" TopLine="97"/>
+      </Position12>
+      <Position13>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="108" Column="1" TopLine="97"/>
+      </Position13>
+      <Position14>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="98" Column="1" TopLine="92"/>
+      </Position14>
+      <Position15>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="103" Column="1" TopLine="92"/>
+      </Position15>
+      <Position16>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="116" Column="39" TopLine="101"/>
+      </Position16>
+      <Position17>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="117" Column="1" TopLine="101"/>
+      </Position17>
+      <Position18>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="99" Column="1" TopLine="84"/>
+      </Position18>
+      <Position19>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="117" Column="1" TopLine="102"/>
+      </Position19>
+      <Position20>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="104" Column="1" TopLine="98"/>
+      </Position20>
+      <Position21>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="117" Column="1" TopLine="98"/>
+      </Position21>
+      <Position22>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="104" Column="1" TopLine="98"/>
+      </Position22>
+      <Position23>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="117" Column="1" TopLine="98"/>
+      </Position23>
+      <Position24>
+        <Filename Value="..\..\uUSBDisplay.pas"/>
+        <Caret Line="109" Column="1" TopLine="98"/>
+      </Position24>
+      <Position25>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="41" Column="30" TopLine="26"/>
+      </Position25>
+      <Position26>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="65" Column="33" TopLine="40"/>
+      </Position26>
+      <Position27>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="165" Column="8" TopLine="142"/>
+      </Position27>
+      <Position28>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="45" Column="18" TopLine="29"/>
+      </Position28>
+      <Position29>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="144" Column="24" TopLine="129"/>
+      </Position29>
+      <Position30>
+        <Filename Value="clock.lpr"/>
+        <Caret Line="103" Column="42" TopLine="35"/>
+      </Position30>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="9"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="..\clock"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\..\gdiplus;..\.."/>
+      <UnitOutputDirectory Value="..\..\..\lib\modules\clock\$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <CodeGeneration>
+      <TargetCPU Value="i386"/>
+      <TargetOS Value="win32"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseHeaptrc Value="True"/>
+      </Debugging>
+      <Options>
+        <ExecutableType Value="Library"/>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerMessages>
+        <UseMsgFile Value="True"/>
+      </CompilerMessages>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <BreakPoints Count="1">
+      <Item1>
+        <Source Value="..\..\uModulAPI.pas"/>
+        <Line Value="155"/>
+      </Item1>
+    </BreakPoints>
+    <Watches Count="1">
+      <Item1>
+        <Expression Value="fBgColor"/>
+        <DisplayStyle Value="wdfHex"/>
+      </Item1>
+    </Watches>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
