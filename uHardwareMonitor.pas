@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, windows, uUSBDisplay, syncobjs, Graphics, uUSBD480_API,
-  uModulAPI, ExtCtrls, contnrs, uMCF;
+  uModulAPI, ExtCtrls, uMCF, contnrs, fgl;
 
 type
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,14 +102,55 @@ type
   end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  TDisplayInfoEx = packed record
-    dInfo: TDisplayInfo;
-    obj: TUSBDisplay;
+  TDisplayInfoDynArr = array of TDisplayInfo;
+  THardwareMonitorDynArr = array of THardwareMonitor;
+
+  { TDisplays }
+
+  TDisplays = class(TObject)
+  private
+    fDisplays: TDisplayInfoDynArr;
+    fHardwareMonitor: THardwareMonitorDynArr;
+    function GetCount: Integer;
+    function GetDisplay(const aIndex: Integer): TDisplayInfo;
+    function GetHardwareMonitor(const aIndex: Integer): THardwareMonitor;
+  public
+    property Count: Integer read GetCount;
+    property Display[const aIndex: Integer]: TDisplayInfo read GetDisplay; default;
+    property HardwareMonitor[const aIndex: Integer]: THardwareMonitor read GetHardwareMonitor;
+
+    function ActivateHardwareMonitor(const aIndex: Integer): THardwareMonitor;
+    procedure DeactivateHardwareMonitor(const aIndex: Integer);
+
+    constructor Create;
+    destructor Destroy; override;
   end;
-  TModulesInfoExDynArr = array of TModulInfoEx;
-  TDisplayInfoExDynArr = array of TDisplayInfoEx;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  TModulesInfoExDynArr = array of TModulInfoEx;
+  TModulesInfo = class(TObject)
+  private
+    fSearchSubFolders: Boolean;
+    fModulPath: String;
+    fModules: TModulesInfoExDynArr;
+    procedure UpdateModules;
+
+    function GetCount: Integer;
+    function GetModul(const aIndex: Integer): TModulInfoEx;
+
+    procedure SetSearchSubFolders(const aValue: Boolean);
+    procedure SetModulPath(const aValue: String);
+  public
+    property SearchSubFolders: Boolean read fSearchSubFolders write SetSearchSubFolders;
+    property ModulPath       : String  read fModulPath        write SetModulPath;
+    property Count: Integer read GetCount;
+    property Module[const aIndex: Integer]: TModulInfoEx read GetModul; default;
+    constructor Create;
+  end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+{.$DEFINE COMPILE_HM}
+{$IFDEF COMPILE_HM}
   EHardwareMonitor = class(Exception);
   THardwareMonitor = class(TThread)
   private
@@ -124,14 +165,10 @@ type
     fLargeModul: THardwareMonitorModul;
     fCanWork: TEvent;
     fTimer: TTimer;
-    fActiveModules: TObjectList;
 
     fFrameBufferCS: TRTLCriticalSection;
     fActiveModulesCS: TRTLCriticalSection;
     fOnUpdate: TNotifyEvent;
-
-    fModules: TModulesInfoExDynArr;
-    fDisplays: TDisplayInfoExDynArr;
 
     procedure SetSuspended(const aValue: Boolean);
     procedure SetModulPath(const aValue: String);
@@ -192,11 +229,140 @@ type
     constructor Create;
     destructor Destroy; override;
   end;
+{$ELSE}
+  TModules = specialize TFPGObjectList<THardwareMonitorModul>;
+
+  { TUpdateThread }
+
+  TUpdateThread = class(TThread)
+  private
+    fModules: TModules;
+    fCritSec: TRTLCriticalSection;
+    fCycleEvent: TEvent;
+    fUpdateDoneEvent: TNotifyEvent;
+    procedure DoUpdateDone;
+  protected
+    procedure Execute; override;
+  public
+    procedure DoUpdate;
+    procedure Terminate;
+
+    constructor Create(const aModules: TModules; const aCritSec: TRTLCriticalSection; const aUpdateDoneEvent: TNotifyEvent);
+    destructor Destroy; override;
+  end;
+
+  { THardwareMonitor }
+
+  THardwareMonitor = class(TUSBDisplay)
+  private
+    fFrameBufferCS: TRTLCriticalSection;
+    fModulesCS: TRTLCriticalSection;
+    fModules: TModules;
+    fBackground: TBitmap;
+    fLargeModul: THardwareMonitorModul;
+    fUpdateThread: TUpdateThread;
+    fTimer: TTimer;
+
+    function GetModulCount: Integer;
+    function GetModul(const aIndex: Integer): THardwareMonitorModul;
+    function GetUpdateRate: Cardinal;
+    procedure SetUpdateRate(const aValue: Cardinal);
+    procedure ThreadUpdateDone(aSender: TObject);
+    procedure TimerTick(aSender: TObject);
+  protected
+    procedure TouchEvent(aSender: TObject; aPoint: TPoint; aPressure: Byte; aMode: TTouchMode); override;
+  public
+    property ModulCount: Integer read GetModulCount;
+    property Modules[const aIndex: Integer]: THardwareMonitorModul read GetModul;
+    property UpdateRate: Cardinal read GetUpdateRate write SetUpdateRate;
+    property LargeModul: THardwareMonitorModul read fLargeModul;
+
+    function AddModul(const aLibFile: String): THardwareMonitorModul;
+    function GetModulByName(const aName: String): THardwareMonitorModul;
+    procedure DelModul(const aIndex: Integer);
+    procedure UpdateFrameBuffer;
+    procedure Update(const aUpdateFrameBuffer: Boolean = false);
+    procedure SetBackground(const aGraphic: TGraphic);
+    procedure SetSize(AWidth, AHeight: integer); override;
+    procedure EmulateTouch(const aPoint: TPoint);
+    procedure LockFrameBuffer;
+    procedure UnlockFrameBuffer;
+
+    constructor Create(const aDisplayID: Integer);
+    destructor Destroy; override;
+  end;
+{$ENDIF}
 
 implementation
 
 function GdiAlphaBlend(hdcDest: HDC; xDest, yDest, wDest, hDest: Integer;
   hdcSrc: HDC; xSrc, ySrc, wSrc, hSrc: Integer; ftn: TBlendFunction): Boolean; stdcall; external 'gdi32.dll';
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TUpdateThread.DoUpdateDone;
+begin
+  if Assigned(fUpdateDoneEvent) then
+    fUpdateDoneEvent(self);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TUpdateThread.Execute;
+var
+  i: Integer;
+begin
+  while not Terminated do begin
+    if not Assigned(fCycleEvent) then
+      exit;
+    fCycleEvent.WaitFor(INFINITE);
+    if not Assigned(fCycleEvent) then
+      exit;
+    fCycleEvent.ResetEvent;
+    EnterCriticalSection(fCritSec);
+    try
+      for i := 0 to fModules.Count-1 do begin
+        fModules[i].Resize;
+        fModules[i].Update;
+      end;
+    finally
+      LeaveCriticalSection(fCritSec);
+    end;
+    if Assigned(fUpdateDoneEvent) then
+      Synchronize(@DoUpdateDone);
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TUpdateThread.DoUpdate;
+begin
+  if Assigned(fCycleEvent) then
+    fCycleEvent.SetEvent;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TUpdateThread.Terminate;
+begin
+  inherited Terminate;
+  DoUpdate;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+constructor TUpdateThread.Create(const aModules: TModules; const aCritSec: TRTLCriticalSection; const aUpdateDoneEvent: TNotifyEvent);
+begin
+  inherited Create(true);
+  fCycleEvent := TEvent.Create(nil, true, false, '');
+  fModules := aModules;
+  fCritSec := aCritSec;
+  fUpdateDoneEvent := aUpdateDoneEvent;
+  Resume;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+destructor TUpdateThread.Destroy;
+begin
+  fCycleEvent.SetEvent;
+  FreeAndNil(fCycleEvent);
+  inherited Destroy;
+end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //THardwareMonitorModul/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -241,7 +407,7 @@ begin
   try
     fPosition := aValue;
     if Assigned(fOwner) then
-      fOwner.Resume;
+      fOwner.Update(true);
   finally
     LeaveCriticalSection(fDataCS);
   end;
@@ -270,7 +436,7 @@ begin
     try
       fNeedResize := aValue;
       if Assigned(fOwner) then
-        fOwner.Resume;
+        fOwner.Update(true);
     finally
       LeaveCriticalSection(fDataCS);
     end;
@@ -282,7 +448,7 @@ procedure THardwareMonitorModul.SetName(const aValue: String);
 begin
   EnterCriticalSection(fDataCS);
   try
-    if Assigned(fOwner.GetActiveModul(aValue)) then
+    if Assigned(fOwner.GetModulByName(aValue)) then
       raise EHardwareMonitorModul.Create('Name already taken!');
     fName := aValue;
   finally
@@ -646,10 +812,6 @@ var
   lib: String;
   i: Integer;
 begin
-  lib := fOwner.Modulpath + aSection.GetString('LibName', '');
-  if FileExists(lib) then
-    InitLib(lib);
-
   EnterCriticalSection(fDataCS);
   EnterCriticalSection(fEventCS);
   try
@@ -734,12 +896,12 @@ procedure THardwareMonitorModul.InitLib(const aLibPath: String);
     o: THardwareMonitorModul;
     i: Integer;
   begin
-    o := fOwner.GetActiveModul(aName);
+    o := fOwner.GetModulByName(aName);
     if Assigned(o) then begin
       i := 0;
       while Assigned(o) do begin
         inc(i);
-        o := fOwner.GetActiveModul(aName + ' ' + IntToStr(i));
+        o := fOwner.GetModulByName(aName + ' ' + IntToStr(i));
       end;
       aName := aName + ' ' + IntToStr(i);
     end;
@@ -777,7 +939,8 @@ begin
           Year    := info.Year;
         end;
         mName := fModulInfoEx.Name + ' ' + fModulInfoEx.Version;
-        CheckName(mName);
+        if Assigned(fOwner) then
+          CheckName(mName);
         Name := mName;
 
         fInitLibData();
@@ -865,8 +1028,191 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//TModulesInfo//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TModulesInfo.UpdateModules;
+var
+  dllList: TStringList;
+
+  procedure SearchPath(const aPath: String);
+  var
+    sr: TSearchRec;
+    Found: Integer;
+  begin
+    Found := FindFirst(aPath+'*.*', faAnyFile, sr);
+    while Found = 0 do begin
+      if (sr.Name <> '.') and (sr.Name <> '..') then begin
+        if LowerCase(ExtractFileExt(sr.Name)) = '.dll' then
+          dllList.Add(aPath+sr.Name);
+        if DirectoryExists(aPath + sr.Name) then
+          SearchPath(aPath + sr.Name + '\');
+      end;
+      Found := FindNext(sr);
+    end;
+    SysUtils.FindClose(sr);
+  end;
+
+var
+  i: Integer;
+  lib: Cardinal;
+  p: TModulInfoProc;
+  mInfo: TModulInfo;
+begin
+  dllList := TStringList.Create;
+  try
+    SearchPath(fModulPath);
+    SetLength(fModules, dllList.Count);
+    for i := 0 to High(fModules) do begin
+      lib := LoadLibrary(PAnsiChar(dllList[i]));
+      if (lib <> 0) then begin
+        p := TModulInfoProc(GetProcAddress(lib, 'ModulInfo'));
+        if Assigned(p) then begin
+          mInfo := p();
+          fModules[i].libName := dllList[i];
+          fModules[i].Name    := mInfo.Name;
+          fModules[i].Autor   := mInfo.Autor;
+          fModules[i].eMail   := mInfo.eMail;
+          fModules[i].Version := mInfo.Version;
+          fModules[i].Year    := mInfo.Year;
+        end else
+          raise Exception.Create(format(
+            'unable to load procedure ''ModulInfo'' from lib ''%s'' error code: %d',
+            [dllList[i], GetLastError]));
+      end else
+        raise Exception.Create(format(
+          'unable to load lib: ''%s'' error code: %d',
+          [dllList[i], GetLastError]));
+    end;
+  finally
+    FreeAndNil(dllList);
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function TModulesInfo.GetCount: Integer;
+begin
+  result := Length(fModules);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function TModulesInfo.GetModul(const aIndex: Integer): TModulInfoEx;
+begin
+  if (aIndex >= 0) and (aIndex < Count) then
+    result := fModules[aIndex]
+  else
+    raise Exception.Create(format('TModules.GetModul: index out of bounds (%d)', [aIndex]));
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TModulesInfo.SetSearchSubFolders(const aValue: Boolean);
+begin
+  fSearchSubFolders := aValue;
+  UpdateModules;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TModulesInfo.SetModulPath(const aValue: String);
+begin
+  fModulPath := aValue;
+  if (length(fModulPath) > 0) and (fModulPath[Length(fModulPath)] <> '\') then
+    fModulPath := fModulPath + '\';
+  UpdateModules;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+constructor TModulesInfo.Create;
+begin
+  inherited Create;
+  fModulPath := '';
+  fSearchSubFolders := true;
+  SetLength(fModules, 0);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//TDisplays/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function TDisplays.GetCount: Integer;
+begin
+  result := Length(fDisplays);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function TDisplays.GetDisplay(const aIndex: Integer): TDisplayInfo;
+begin
+  if (aIndex >= 0) and (aIndex < Count) then
+    result := fDisplays[aIndex]
+  else
+    raise Exception.Create(format('TDisplays.GetDisplay: index out of bounds (%d)', [aIndex]));
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function TDisplays.GetHardwareMonitor(const aIndex: Integer): THardwareMonitor;
+begin
+  if (aIndex >= 0) and (aIndex < Count) then
+    result := fHardwareMonitor[aIndex]
+  else
+    raise Exception.Create(format('TDisplays.GetHardwareMonitor: index out of bounds (%d)', [aIndex]));
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function TDisplays.ActivateHardwareMonitor(const aIndex: Integer): THardwareMonitor;
+begin
+  if (aIndex >= 0) and (aIndex < Count) then begin
+    if not Assigned(fHardwareMonitor[aIndex]) then
+      fHardwareMonitor[aIndex] := THardwareMonitor.Create(aIndex-1);
+    result := fHardwareMonitor[aIndex];
+  end else
+    raise Exception.Create(format('TDisplays.ActivateHardwareMonitor: index out of bounds (%d)', [aIndex]));
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TDisplays.DeactivateHardwareMonitor(const aIndex: Integer);
+begin
+  if (aIndex >= 0) and (aIndex < Count) then begin
+    if Assigned(fHardwareMonitor[aIndex]) then
+      FreeAndNil(fHardwareMonitor[aIndex]);
+  end else
+    raise Exception.Create(format('TDisplays.ActivateHardwareMonitor: index out of bounds (%d)', [aIndex]));
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+constructor TDisplays.Create;
+var
+  i, c: Integer;
+begin
+  inherited Create;
+  USBD480_Init();
+  c := USBD480_GetNumberOfDisplays();
+  SetLength(fDisplays, c+1);
+  SetLength(fHardwareMonitor, c+1);
+  FillChar(fDisplays[0],        SizeOf(fDisplays[0])        * Length(fDisplays), #0);
+  FillChar(fHardwareMonitor[0], SizeOf(fHardwareMonitor[0]) * Length(fDisplays), #0);
+  with fDisplays[0] do begin
+    Name         := 'Dummy Display';
+    Width        := 480;
+    Height       := 272;
+    SerialNumber := '0123456789D';
+  end;
+  for i := 1 to c do begin
+    USBD480_GetDisplayConfiguration(i-1, @fDisplays[i]);
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+destructor TDisplays.Destroy;
+var
+  i: Integer;
+begin
+  for i := 0 to High(fHardwareMonitor) do
+    if Assigned(fHardwareMonitor[i]) then
+      FreeAndNil(fHardwareMonitor[i]);
+  inherited Destroy;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //THardwareMonitor//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+{$IFDEF COMPILE_HM}
 procedure THardwareMonitor.SetSuspended(const aValue: Boolean);
 begin
   if fSuspended = aValue then
@@ -1446,6 +1792,290 @@ begin
   DoneCriticalsection(fFrameBufferCS);
   DoneCriticalsection(fActiveModulesCS);
 end;
+{$ELSE}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//THardwareMonitor//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function THardwareMonitor.GetModulCount: Integer;
+begin
+  result := fModules.Count;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function THardwareMonitor.GetModul(const aIndex: Integer): THardwareMonitorModul;
+begin
+  if (aIndex >= 0) and (aIndex < fModules.Count) then
+    result := fModules[aIndex]
+  else
+    raise Exception.Create(format('THardwareMonitor.GetModul: index out of bounds (%d)', [aIndex]));
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function THardwareMonitor.GetUpdateRate: Cardinal;
+begin
+  result := fTimer.Interval;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.SetUpdateRate(const aValue: Cardinal);
+begin
+  fTimer.Enabled := (aValue <> 0);
+  fTimer.Interval := aValue;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.ThreadUpdateDone(aSender: TObject);
+begin
+  UpdateFrameBuffer;
+  inherited Update;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.TimerTick(aSender: TObject);
+begin
+  Update(true);
+end;
+
+procedure THardwareMonitor.TouchEvent(aSender: TObject; aPoint: TPoint; aPressure: Byte; aMode: TTouchMode);
+var
+  p: TPoint;
+  i: Integer;
+  obj: THardwareMonitorModul;
+begin
+  inherited TouchEvent(aSender, aPoint, aPressure, aMode);
+
+  if Assigned(fLargeModul) then begin
+    if fLargeModul.SendTouchReport(aPoint, aPressure, aMode) then begin
+      fLargeModul.IsSmall := true;
+      fLargeModul := nil;
+    end;
+  end else begin
+    EnterCriticalSection(fModulesCS);
+    try
+      for i := fModules.Count-1 downto 0 do begin
+        obj := fModules[i];
+        with obj  do begin
+          if (aPoint.X >= Position.x) and
+             (aPoint.Y >= Position.y) and
+             (aPoint.X <= Position.x + SmallSize.x) and
+             (aPoint.Y <= Position.y + SmallSize.y) then begin
+            p := aPoint;
+            p.X := aPoint.X - Position.x;
+            p.Y := aPoint.Y - Position.y;
+            if SendTouchReport(p, aPressure, aMode) then begin
+              fLargeModul := obj;
+              fLargeModul.IsSmall := false;
+              UpdateFrameBuffer;
+              inherited Update;
+              exit;
+            end;
+            Continue;
+          end;
+        end;
+      end;
+    finally
+      LeaveCriticalSection(fModulesCS);
+    end;
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function THardwareMonitor.AddModul(const aLibFile: String): THardwareMonitorModul;
+begin
+  EnterCriticalSection(fModulesCS);
+  try
+    result := THardwareMonitorModul.Create(self);
+    try
+      result.InitLib(aLibFile);
+      fModules.Add(result);
+      Update(true);
+    except
+        on E: Exception do begin
+        if fModules.Remove(result) < 0 then
+          FreeAndNil(result);
+        raise e;
+      end;
+    end;
+  finally
+    LeaveCriticalSection(fModulesCS);
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function THardwareMonitor.GetModulByName(const aName: String): THardwareMonitorModul;
+var
+  i: Integer;
+begin
+  result := nil;
+  for i := 0 to fModules.Count-1 do begin
+    if (fModules[i].Name = aName) then begin
+      result := fModules[i];
+      break;
+    end;
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.DelModul(const aIndex: Integer);
+begin
+  EnterCriticalSection(fModulesCS);
+  try
+    if (aIndex >= 0) and (aIndex < fModules.Count) then begin
+      fModules.Delete(aIndex);
+      Update(true);
+    end else
+      raise Exception.Create(format('THardwareMonitor.DelModul: index out of bounds (%d)', [aIndex]));
+  finally
+    LeaveCriticalSection(fModulesCS);
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.UpdateFrameBuffer;
+var
+  i: Integer;
+  o: THardwareMonitorModul;
+  f: TBlendFunction;
+  bmp: TBitmap;
+  dRes: TDrawResult;
+
+  procedure DrawModul(const aModul: THardwareMonitorModul);
+  var
+    p, s: Point;
+  begin
+    dRes := aModul.Draw;
+    if dRes.Transparent then
+      f.AlphaFormat := AC_SRC_ALPHA
+    else
+      f.AlphaFormat := 0;
+    if aModul.CurrentIsSmall then
+      p := aModul.Position
+    else
+      p := Classes.Point(0, 0);
+    if aModul.CurrentIsSmall then
+      s := aModul.CurrentSmallSize
+    else
+      s := aModul.CurrentLargeSize;
+    GdiAlphaBlend(Canvas.Handle, p.x, p.y, s.x, s.y,
+      dRes.Handle, 0, 0, dRes.Width, dRes.Height, f);
+  end;
+
+begin
+  LockFrameBuffer;
+  try
+    Canvas.StretchDraw(Classes.Rect(0, 0,
+      fBackground.Width, fBackground.Height), fBackground);
+
+    f.AlphaFormat         := 0;//AC_SRC_ALPHA;
+    f.BlendFlags          := 0;
+    f.BlendOp             := AC_SRC_OVER;
+    f.SourceConstantAlpha := 255;
+
+  //UPDATE
+  {
+    EnterCriticalSection(fActiveModulesCS);
+    try
+      for i := 0 to fActiveModules.Count-1 do
+        with (fActiveModules[i] as THardwareMonitorModul) do begin
+          Resize;
+          Update;
+        end;
+    finally
+      LeaveCriticalSection(fActiveModulesCS);
+    end;
+  }
+
+  //DRAW
+    EnterCriticalSection(fModulesCS);
+    try
+      if Assigned(fLargeModul) then begin
+        DrawModul(fLargeModul);
+      end else
+        for i := 0 to fModules.Count-1 do
+          DrawModul(fModules[i]);
+    finally
+      LeaveCriticalSection(fModulesCS);
+    end;
+  finally
+    UnlockFrameBuffer;
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.LockFrameBuffer;
+begin
+  EnterCriticalSection(fFrameBufferCS);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.UnlockFrameBuffer;
+begin
+  LeaveCriticalSection(fFrameBufferCS);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.Update(const aUpdateFrameBuffer: Boolean = false);
+begin
+  if not aUpdateFrameBuffer then
+    inherited Update
+  else
+    fUpdateThread.DoUpdate;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.SetBackground(const aGraphic: TGraphic);
+begin
+  fBackground.Canvas.StretchDraw(Classes.Rect(0, 0, fBackground.Width, fBackground.Height), aGraphic);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.SetSize(AWidth, AHeight: integer);
+begin
+  inherited SetSize(AWidth, AHeight);
+  fBackground.SetSize(AWidth, AHeight);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.EmulateTouch(const aPoint: TPoint);
+begin
+  TouchEvent(self, aPoint, 1, tmPenDown);
+  TouchEvent(self, aPoint, 1, tmPenUp);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+constructor THardwareMonitor.Create(const aDisplayID: Integer);
+begin
+  inherited Create;
+
+  InitCriticalSection(fFrameBufferCS);
+  InitCriticalSection(fModulesCS);
+
+  fBackground := TBitmap.Create;
+  fModules := TModules.Create(true);
+  Open(aDisplayID);
+  fUpdateThread := TUpdateThread.Create(fModules, fModulesCS, @ThreadUpdateDone);
+  fTimer := TTimer.Create(nil);
+  fTimer.OnTimer := @TimerTick;
+  fTimer.Enabled := true;
+  fTimer.Interval := 250;
+  TouchInterval := 100;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+destructor THardwareMonitor.Destroy;
+begin
+  FreeAndNil(fTimer);
+  FreeAndNil(fUpdateThread);
+  Close;
+  FreeAndNil(fBackground);
+  FreeAndNil(fModules);
+
+  DoneCriticalSection(fFrameBufferCS);
+  DoneCriticalSection(fModulesCS);
+  inherited Destroy;
+end;
+{$ENDIF}
 
 end.
 

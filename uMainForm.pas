@@ -89,12 +89,14 @@ type
     procedure SettingsVSTGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: String);
     procedure SettingsVSTNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; const NewText: String);
   private
-    fHardwareMonitor: THardwareMonitor;
-    fCurrentModul: THardwareMonitorModul;
-    fCurrentModulID: Integer;
+    fModules: TModulesInfo;
+    fDisplays: TDisplays;
+    fActiveMonitor: THardwareMonitor;
+    fActiveModul: THardwareMonitorModul;
+    fActiveModulID: Integer;
     fMouseDown: Byte;
     fMouseDownPos, fOldModulPos, fOldModulSize: TPoint;
-    fIsEditing: Boolean;
+    fIsEditing, fPreviewNeedUpdate: Boolean;
     fFormatSettings: TFormatSettings;
 
     fBgNode: PVirtualNode;
@@ -108,6 +110,9 @@ type
     procedure OnChangeSettings(Sender: TObject);
 
     function IsOnModul(const aModul: THardwareMonitorModul; const X, Y: Integer): Byte;
+    procedure MonitorUpdate(aSendeR: TObject);
+    procedure SetActiveMonitor(const aMonitor: THardwareMonitor);
+    procedure SetActiveModul(const aIndex: Integer);
     procedure UpdateModulesLB;
     procedure UpdateActiveModulesLB;
     procedure UpdateDisplaysCLB;
@@ -140,9 +145,9 @@ const
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.OnChangeModulSizePos(Sender: TObject);
 begin
-  if Assigned(fCurrentModul) then begin
-    fCurrentModul.NeedResize := true;
-    SaveModulData(fCurrentModulID);
+  if Assigned(fActiveModul) then begin
+    fActiveModul.NeedResize := true;
+    SaveModulData(fActiveModulID);
   end;
 end;
 
@@ -152,12 +157,16 @@ var
   d: PSettingsItemEx;
   pic: TPicture;
 begin
+  if not Assigned(fActiveMonitor) then
+    exit;
   d := SettingsVST.GetNodeData(fBgNode);
   if Assigned(d) and (d^.i.DataType = dtPicture) and FileExists(PString(d^.i.Data)^) then begin
     pic := TPicture.Create;
     try
       pic.LoadFromFile(PString(d^.i.Data)^);
-      fHardwareMonitor.SetBackground(pic.Graphic);
+      fActiveMonitor.SetBackground(pic.Graphic);
+      fActiveMonitor.Update(true);
+      PreviewPB.Repaint;
     finally
       pic.Free;
     end;
@@ -169,14 +178,15 @@ procedure TMainForm.OnChangeUpdateRate(Sender: TObject);
 begin
   if fUpdateRate < 50 then
     fUpdateRate := 50;
-  fHardwareMonitor.UpdateTime := fUpdateRate;
+//  fHardwareMonitor.UpdateTime := fUpdateRate;
+{$MESSAGE WARNING 'TODO!!!'}
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.OnChangeSettings(Sender: TObject);
 begin
-  if Assigned(fCurrentModul) then begin
-    fCurrentModul.SetSettings;
+  if Assigned(fActiveModul) then begin
+    fActiveModul.SetSettings;
   end;
 end;
 
@@ -242,6 +252,46 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TMainForm.MonitorUpdate(aSendeR: TObject);
+begin
+  PreviewPB.Repaint;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TMainForm.SetActiveMonitor(const aMonitor: THardwareMonitor);
+begin
+  if Assigned(fActiveMonitor) then
+    fActiveMonitor.OnUpdate := nil;
+  fActiveMonitor := aMonitor;
+  AddModulBt.Enabled      := Assigned(fActiveMonitor);
+  DelModulBt.Enabled      := Assigned(fActiveMonitor);
+  ActiveModulesLB.Enabled := Assigned(fActiveMonitor);
+  LoadSettingsBt.Enabled  := Assigned(fActiveMonitor);
+  SaveSettingsBt.Enabled  := Assigned(fActiveMonitor);
+  SettingsVST.Enabled     := Assigned(fActiveMonitor);
+  PreviewPB.Enabled       := Assigned(fActiveMonitor);
+  if Assigned(fActiveMonitor) then begin
+    fActiveMonitor.OnUpdate := @MonitorUpdate;
+    fActiveMonitor.Update(true);
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TMainForm.SetActiveModul(const aIndex: Integer);
+begin
+  if Assigned(fActiveMonitor) and (aIndex >= 0) and (aIndex < fActiveMonitor.ModulCount) then begin
+    fActiveModul   := fActiveMonitor.Modules[aIndex];
+    fActiveModulID := aIndex;
+  end else begin
+    fActiveModul   := nil;
+    fActiveModulID := -1;
+  end;
+  BuildModulSettingsTree(fActiveModul);
+  ActiveModulesLB.ItemIndex := fActiveModulID;
+  PreviewPB.Repaint;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.UpdateModulesLB;
 var
   i: Integer;
@@ -250,8 +300,8 @@ begin
   with ModulesLB.Items do begin
     BeginUpdate;
     Clear;
-    for i := 0 to fHardwareMonitor.ModulCount-1 do begin
-      info := fHardwareMonitor.Modules[i];
+    for i := 0 to fModules.Count-1 do begin
+      info := fModules[i];
       Add(format('%s %s', [info.Name, info.Version]));
     end;
     EndUpdate;
@@ -267,14 +317,14 @@ procedure TMainForm.UpdateActiveModulesLB;
 var
   i: Integer;
 begin
-  with ActiveModulesLB.Items do begin
-    BeginUpdate;
-    Clear;
-    for i := 0 to fHardwareMonitor.ActiveModulCount-1 do begin
-      Add(fHardwareMonitor.ActiveModules[i].Name);
+  if Assigned(fActiveMonitor) then
+    with ActiveModulesLB.Items do begin
+      BeginUpdate;
+      Clear;
+      for i := 0 to fActiveMonitor.ModulCount-1 do
+        Add(fActiveMonitor.Modules[i].Name);
+      EndUpdate;
     end;
-    EndUpdate;
-  end;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,17 +337,13 @@ begin
   with DisplaysCLB.Items do begin
     BeginUpdate;
     Clear;
-    for i := 0 to fHardwareMonitor.DisplayCount-1 do begin
-      info := fHardwareMonitor.Displays[i];
+    for i := 0 to fDisplays.Count-1 do begin
+      info := fDisplays[i];
       Add(format('%s', [info.Name]));
+      DisplaysCLB.Checked[i] := Assigned(fDisplays.HardwareMonitor[i]);
     end;
     EndUpdate;
   end;
-  if Assigned(fHardwareMonitor.ActiveDisplay) then
-    for i := 0 to fHardwareMonitor.DisplayCount-1 do
-      DisplaysCLB.Checked[i] :=
-        (fHardwareMonitor.ActiveDisplay.DisplayInfo.SerialNumber =
-         fHardwareMonitor.Displays[i].SerialNumber);
   if DisplaysCLB.Count > 0 then begin
     DisplaysCLB.ItemIndex := DisplaysCLB.Count-1;
     LoadDisplayInfo(DisplaysCLB.ItemIndex);
@@ -326,8 +372,8 @@ var
 begin
   if ID < 0 then
     exit;
-  info := fHardwareMonitor.Modules[ID];
-  ModFileLab.Caption    := info.libName;
+  info := fModules[ID];
+  ModFileLab.Caption    := MiniMizeName(info.libName, ModFileLab.Canvas, ModulesGroup.Width-50);
   ModNameLab.Caption    := info.Name;
   ModVersionLab.Caption := info.Version;
   ModAutorLab.Caption   := info.Autor;
@@ -452,12 +498,14 @@ var
 begin
   if ID < 0 then
     exit;
-  info := fHardwareMonitor.Displays[ID];
+  info := fDisplays[ID];
   DispNameLab.Caption    := info.Name;
   DispVersionLab.Caption := format('%d', [info.Version]);
   DispWidthLab.Caption   := format('%d px', [info.Width]);
   DispHeightLab.Caption  := format('%d px', [info.Height]);
   DispSerialLab.Caption  := info.SerialNumber;
+  if Assigned(fDisplays.HardwareMonitor[ID]) then
+    SetActiveMonitor(fDisplays.HardwareMonitor[ID]);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -500,25 +548,16 @@ begin
   FillChar(d^, SizeOf(d^), 0);
   d^.i.Name := 'Modul';
 
-////////////////////////////////////////////////////////////////////////////////
-  fCurrentModul   := nil;
-  fCurrentModulID := -1;
-  fHardwareMonitor := THardwareMonitor.Create;
-  try
-    fHardwareMonitor.OnUpdate := @HardwareMonitorUpdate;
-    fHardwareMonitor.Modulpath := ExtractFilePath(Application.ExeName)+'modules';
-    fHardwareMonitor.Init;
-    fHardwareMonitor.UpdateTime := fUpdateRate;
-    UpdateDisplaysCLB;
-    UpdateModulesLB;
-    fHardwareMonitor.Resume;
-  except
-    on e: Exception do begin
-      ShowMessage(format('Fehler beim Initialisieren des Prgramms: %s - %s',
-        [e.ClassName, e.Message]));
-      Application.Terminate;
-    end;
-  end;
+  fDisplays := TDisplays.Create;
+  fModules := TModulesInfo.Create;
+  fModules.ModulPath := ExtractFilePath(Application.ExeName)+'modules';
+
+  SetActiveMonitor(nil);
+  fActiveModul   := nil;
+  fActiveModulID := -1;
+
+  UpdateDisplaysCLB;
+  UpdateModulesLB;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -530,12 +569,10 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.DelModulBtClick(Sender: TObject);
 begin
-  if (ActiveModulesLB.ItemIndex >= 0) then begin
-    if (fCurrentModulID = ActiveModulesLB.ItemIndex) then begin
-      fCurrentModulID := -1;
-      fCurrentModul   := nil;
-    end;
-    fHardwareMonitor.DisableModul(ActiveModulesLB.ItemIndex);
+  if Assigned(fActiveMonitor) and (ActiveModulesLB.ItemIndex >= 0) then begin
+    if (fActiveModulID = ActiveModulesLB.ItemIndex) then
+      SetActiveModul(-1);
+    fActiveMonitor.DelModul(ActiveModulesLB.ItemIndex);
     UpdateActiveModulesLB;
   end;
 end;
@@ -543,23 +580,18 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.AddModulBtClick(Sender: TObject);
 begin
-  if (ModulesLB.ItemIndex >= 0) then begin
-    fHardwareMonitor.EnableModul(ModulesLB.ItemIndex);
+  if Assigned(fActiveMonitor) and (ModulesLB.ItemIndex >= 0) then begin
+    fActiveMonitor.AddModul(fModules[ModulesLB.ItemIndex].libName);
     UpdateActiveModulesLB;
-    ActiveModulesLB.ItemIndex := fHardwareMonitor.ActiveModulCount-1;
-    fCurrentModulID := ActiveModulesLB.ItemIndex;
-    fCurrentModul   := fHardwareMonitor.ActiveModules[fCurrentModulID];
+    SetActiveModul(fActiveMonitor.ModulCount-1);
   end;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.ActiveModulesLBClick(Sender: TObject);
 begin
-  fCurrentModulID := ActiveModulesLB.ItemIndex;
-  if fCurrentModulID >= 0 then begin
-    fCurrentModul := fHardwareMonitor.ActiveModules[fCurrentModulID];
-    BuildModulSettingsTree(fCurrentModul);
-  end;
+  if (ActiveModulesLB.ItemIndex >= 0) and Assigned(fActiveMonitor) then
+    SetActiveModul(ActiveModulesLB.ItemIndex);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -570,10 +602,10 @@ var
   obj: THardwareMonitorModul;
 begin
   i := ActiveModulesLB.ItemIndex;
-  if (i >= 0) then begin
-    obj := fHardwareMonitor.ActiveModules[i];
+  if Assigned(fActiveModul) and (i >= 0) then begin
+    obj := fActiveMonitor.Modules[i];
     s := InputBox('Modulname', 'Bitte geben Sie den gewünschten Modulnamen ein:', obj.Name);
-    if (s <> fHardwareMonitor.ActiveModules[i].Name) then begin
+    if (s <> obj.Name) then begin
       try
         obj.Name := s;
         ActiveModulesLB.Items[i] := obj.Name;
@@ -592,29 +624,29 @@ end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.DisplaysCLBClickCheck(Sender: TObject);
-var
-  i: Integer;
 begin
-  for i := 0 to DisplaysCLB.Count-1 do begin
-    if (i <> DisplaysCLB.ItemIndex) then
-      DisplaysCLB.Checked[i] := false;
-  end;
-  if (DisplaysCLB.Checked[DisplaysCLB.ItemIndex]) then
-    fHardwareMonitor.ActivateDisplay(DisplaysCLB.ItemIndex)
-  else
-    fHardwareMonitor.ActivateDisplay(-1);
-  PreviewPB.Repaint;
+  with DisplaysCLB do
+    if (ItemIndex >= 0) then begin
+      if (Checked[ItemIndex]) then begin
+        SetActiveMonitor(fDisplays.ActivateHardwareMonitor(ItemIndex));
+      end else begin
+        fDisplays.DeactivateHardwareMonitor(ItemIndex);
+        SetActiveMonitor(nil);
+      end;
+      PreviewPB.Repaint;
+    end;
 end;
 
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  fHardwareMonitor.Suspend;
+
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-  fHardwareMonitor.Free;
+  FreeAndNil(fModules);
+  FreeAndNil(fDisplays);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -627,20 +659,20 @@ procedure TMainForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftSta
   end;
 
 begin
-  if Assigned(fCurrentModul) and not fIsEditing then begin
+  if Assigned(fActiveModul) and not fIsEditing then begin
     if (ssShift in Shift) then begin
       case Key of
-        VK_UP   : fCurrentModul.SmallSize := Move(fCurrentModul.SmallSize,  0, -1);
-        VK_DOWN : fCurrentModul.SmallSize := Move(fCurrentModul.SmallSize,  0,  1);
-        VK_LEFT : fCurrentModul.SmallSize := Move(fCurrentModul.SmallSize, -1,  0);
-        VK_RIGHT: fCurrentModul.SmallSize := Move(fCurrentModul.SmallSize,  1,  0);
+        VK_UP   : fActiveModul.SmallSize := Move(fActiveModul.SmallSize,  0, -1);
+        VK_DOWN : fActiveModul.SmallSize := Move(fActiveModul.SmallSize,  0,  1);
+        VK_LEFT : fActiveModul.SmallSize := Move(fActiveModul.SmallSize, -1,  0);
+        VK_RIGHT: fActiveModul.SmallSize := Move(fActiveModul.SmallSize,  1,  0);
       end;
     end else begin
       case Key of
-        VK_UP   : fCurrentModul.Position := Move(fCurrentModul.Position,  0, -1);
-        VK_DOWN : fCurrentModul.Position := Move(fCurrentModul.Position,  0,  1);
-        VK_LEFT : fCurrentModul.Position := Move(fCurrentModul.Position, -1,  0);
-        VK_RIGHT: fCurrentModul.Position := Move(fCurrentModul.Position,  1,  0);
+        VK_UP   : fActiveModul.Position := Move(fActiveModul.Position,  0, -1);
+        VK_DOWN : fActiveModul.Position := Move(fActiveModul.Position,  0,  1);
+        VK_LEFT : fActiveModul.Position := Move(fActiveModul.Position, -1,  0);
+        VK_RIGHT: fActiveModul.Position := Move(fActiveModul.Position,  1,  0);
       end;
     end;
     RepaintNodes(fModulNode);
@@ -656,13 +688,7 @@ begin
   if OpenDialog.Execute then begin
     mcf := TmcfFile.Create;
     try
-      BuildModulSettingsTree(nil);
-      mcf.LoadFromFile(OpenDialog.FileName);
-      fHardwareMonitor.LoadFromFile(mcf);
-      fBgFilename := mcf.GetString('Background', '');
-      if FileExists(fBgFilename) then
-        OnChangeBackground(self);
-      fUpdateRate := fHardwareMonitor.UpdateTime;
+      {$MESSAGE WARNING 'TODO!!!'}
       SettingsVST.Repaint;
       UpdateActiveModulesLB;
       UpdateDisplaysCLB;
@@ -687,17 +713,18 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.PreviewPBDblClick(Sender: TObject);
 begin
-  fHardwareMonitor.EmulateTouch(fMouseDownPos);
+  if Assigned(fActiveMonitor) then
+    fActiveMonitor.EmulateTouch(fMouseDownPos);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.PreviewPBMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-  if Assigned(fCurrentModul) then begin
-    fMouseDown := IsOnModul(fCurrentModul, X, Y);
+  if Assigned(fActiveModul) then begin
+    fMouseDown := IsOnModul(fActiveModul, X, Y);
     fMouseDownPos := Point(X, Y);
-    fOldModulPos  := fCurrentModul.Position;
-    fOldModulSize := fCurrentModul.SmallSize;
+    fOldModulPos  := fActiveModul.Position;
+    fOldModulSize := fActiveModul.SmallSize;
   end;
 end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -712,11 +739,11 @@ procedure TMainForm.PreviewPBMouseMove(Sender: TObject; Shift: TShiftState; X, Y
 var
   dX, dY: Integer;
 begin
-  if not Assigned(fCurrentModul) then
+  if not Assigned(fActiveModul) or fPreviewNeedUpdate then
     exit;
 
   if fMouseDown = 0 then begin
-    PreviewPB.Cursor := MODUL_CURSER[IsOnModul(fCurrentModul, X, Y)];
+    PreviewPB.Cursor := MODUL_CURSER[IsOnModul(fActiveModul, X, Y)];
     exit;
   end;
 
@@ -724,41 +751,41 @@ begin
   dY := (Y - fMouseDownPos.Y);
   case fMouseDown of
     1: begin
-      fCurrentModul.Position  := P(fOldModulPos.X + dX, fOldModulPos.Y + dY);
-      fCurrentModul.SmallSize := P(fOldModulSize.X - dX, fOldModulSize.Y - dY);
+      fActiveModul.Position  := P(fOldModulPos.X + dX, fOldModulPos.Y + dY);
+      fActiveModul.SmallSize := P(fOldModulSize.X - dX, fOldModulSize.Y - dY);
     end;
     2: begin
-      fCurrentModul.Position  := P(fOldModulPos.X, fOldModulPos.Y + dY);
-      fCurrentModul.SmallSize := P(fOldModulSize.X, fOldModulSize.Y - dY);
+      fActiveModul.Position  := P(fOldModulPos.X, fOldModulPos.Y + dY);
+      fActiveModul.SmallSize := P(fOldModulSize.X, fOldModulSize.Y - dY);
     end;
     3: begin
-      fCurrentModul.Position  := P(fOldModulPos.X, fOldModulPos.Y + dY);
-      fCurrentModul.SmallSize := P(fOldModulSize.X + dX, fOldModulSize.Y - dY);
+      fActiveModul.Position  := P(fOldModulPos.X, fOldModulPos.Y + dY);
+      fActiveModul.SmallSize := P(fOldModulSize.X + dX, fOldModulSize.Y - dY);
     end;
     4: begin
-      fCurrentModul.SmallSize := P(fOldModulSize.X + dX, fOldModulSize.Y);
+      fActiveModul.SmallSize := P(fOldModulSize.X + dX, fOldModulSize.Y);
     end;
     5: begin
-      fCurrentModul.SmallSize := P(fOldModulSize.X + dX, fOldModulSize.Y + dY);
+      fActiveModul.SmallSize := P(fOldModulSize.X + dX, fOldModulSize.Y + dY);
     end;
     6: begin
-      fCurrentModul.SmallSize := P(fOldModulSize.X, fOldModulSize.Y + dY);
+      fActiveModul.SmallSize := P(fOldModulSize.X, fOldModulSize.Y + dY);
     end;
     7: begin
-      fCurrentModul.Position  := P(fOldModulPos.X + dX, fOldModulPos.Y);
-      fCurrentModul.SmallSize := P(fOldModulSize.X - dX, fOldModulSize.Y + dY);
+      fActiveModul.Position  := P(fOldModulPos.X + dX, fOldModulPos.Y);
+      fActiveModul.SmallSize := P(fOldModulSize.X - dX, fOldModulSize.Y + dY);
     end;
     8: begin
-      fCurrentModul.Position  := P(fOldModulPos.X + dX, fOldModulPos.Y);
-      fCurrentModul.SmallSize := P(fOldModulSize.X - dX, fOldModulSize.Y);
+      fActiveModul.Position  := P(fOldModulPos.X + dX, fOldModulPos.Y);
+      fActiveModul.SmallSize := P(fOldModulSize.X - dX, fOldModulSize.Y);
     end;
     9: begin
-      fCurrentModul.Position := P(fOldModulPos.X + dX, fOldModulPos.Y + dY)
+      fActiveModul.Position := P(fOldModulPos.X + dX, fOldModulPos.Y + dY)
     end;
   end;
-  SaveModulData(fCurrentModulID);
+  SaveModulData(fActiveModulID);
   RepaintNodes(fModulNode);
-  fHardwareMonitor.Resume;
+  fPreviewNeedUpdate := True;
   PreviewPB.Repaint;
 end;
 
@@ -785,32 +812,27 @@ var
   end;
 
 begin
+  if fPreviewNeedUpdate then
+    fPreviewNeedUpdate := false;
+
   with PreviewPB.Canvas do begin
-    Rectangle(-5, -5, PreviewPB.Width+5, PreviewPB.Height+5);
-    with fHardwareMonitor do begin
-      LockFrameBuffer;
-      try
-        StretchDraw(Classes.Rect(0, 0,
-          fHardwareMonitor.FrameBuffer.Width,
-          fHardwareMonitor.FrameBuffer.Height),
-          fHardwareMonitor.FrameBuffer);
-      finally
-        UnlockFrameBuffer;
-      end;
-    end;
     Brush.Style := bsSolid;
     Brush.Color := Color;
-    Pen.Color   := clBlack;
-    Pen.Width   := 1;
-    Brush.Style := bsClear;
-    if not Assigned(fHardwareMonitor.LargeModul) then begin
-      for i := 0 to fHardwareMonitor.ActiveModulCount-1 do begin
-        obj := fHardwareMonitor.ActiveModules[i];
+    Rectangle(-5, -5, PreviewPB.Width+5, PreviewPB.Height+5);
+    if Assigned(fActiveMonitor) then begin
+      Draw(0, 0, fActiveMonitor);
+      if not Assigned(fActiveMonitor.LargeModul) then begin
+        Pen.Color   := clBlack;
+        Pen.Width   := 1;
+        Brush.Style := bsClear;
+        for i := 0 to fActiveMonitor.ModulCount-1 do begin
+          obj := fActiveMonitor.Modules[i];
+          DrawRect;
+        end;
+        Pen.Color := clRed;
+        obj := fActiveModul;
         DrawRect;
       end;
-      Pen.Color := clRed;
-      obj := fCurrentModul;
-      DrawRect;
     end;
   end;
 end;
@@ -823,9 +845,7 @@ begin
   mcf := TmcfFile.Create;
   try
     if SaveDialog.Execute then begin
-      mcf.SetString('Background', fBgFilename);
-      fHardwareMonitor.SaveToFile(mcf);
-      mcf.SaveToFile(SaveDialog.FileName);
+      {$MESSAGE WARNING 'TODO!!!'}
     end;
   finally
     mcf.Free;

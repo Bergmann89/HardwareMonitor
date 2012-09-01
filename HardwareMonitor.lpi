@@ -38,7 +38,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="37">
+    <Units Count="45">
       <Unit0>
         <Filename Value="HardwareMonitor.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -46,20 +46,23 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="53" Y="18"/>
-        <UsageCount Value="77"/>
+        <UsageCount Value="87"/>
       </Unit0>
       <Unit1>
         <Filename Value="uMainForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uMainForm"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="419"/>
-        <CursorPos X="1" Y="434"/>
-        <UsageCount Value="77"/>
+        <TopLine Value="804"/>
+        <CursorPos X="18" Y="834"/>
+        <UsageCount Value="87"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="uUtils.pas"/>
@@ -68,63 +71,62 @@
         <WindowIndex Value="0"/>
         <TopLine Value="38"/>
         <CursorPos X="20" Y="122"/>
-        <UsageCount Value="77"/>
+        <UsageCount Value="87"/>
       </Unit2>
       <Unit3>
         <Filename Value="uUSBDisplay.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uUSBDisplay"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="84"/>
-        <CursorPos X="49" Y="95"/>
-        <UsageCount Value="77"/>
+        <TopLine Value="23"/>
+        <CursorPos X="16" Y="37"/>
+        <UsageCount Value="87"/>
+        <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="uUSBD480_API.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uUSBD480_API"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="64"/>
-        <CursorPos X="39" Y="27"/>
-        <UsageCount Value="77"/>
+        <TopLine Value="357"/>
+        <CursorPos X="3" Y="332"/>
+        <UsageCount Value="87"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="uHardwareMonitor.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uHardwareMonitor"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="439"/>
-        <CursorPos X="1" Y="454"/>
-        <UsageCount Value="77"/>
+        <TopLine Value="256"/>
+        <CursorPos X="65" Y="278"/>
+        <UsageCount Value="87"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="146"/>
         <CursorPos X="43" Y="164"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="10"/>
       </Unit6>
       <Unit7>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="803"/>
-        <CursorPos X="14" Y="824"/>
-        <UsageCount Value="13"/>
+        <TopLine Value="1409"/>
+        <CursorPos X="3" Y="1388"/>
+        <UsageCount Value="12"/>
       </Unit7>
       <Unit8>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\interfaces\win32\win32listsl.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="464"/>
         <CursorPos X="1" Y="481"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit8>
       <Unit9>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\controls.pp"/>
@@ -132,16 +134,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1311"/>
         <CursorPos X="15" Y="1325"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit9>
       <Unit10>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\include\control.inc"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2274"/>
         <CursorPos X="1" Y="2289"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="10"/>
       </Unit10>
       <Unit11>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\extctrls.pp"/>
@@ -149,46 +149,44 @@
         <WindowIndex Value="0"/>
         <TopLine Value="441"/>
         <CursorPos X="3" Y="456"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit11>
       <Unit12>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\include\graphiccontrol.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="99"/>
         <CursorPos X="1" Y="128"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit12>
       <Unit13>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\include\wincontrol.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="6263"/>
         <CursorPos X="1" Y="6280"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit13>
       <Unit14>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\include\winapi.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="597"/>
         <CursorPos X="1" Y="613"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit14>
       <Unit15>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\interfaces\win32\win32winapi.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="3701"/>
         <CursorPos X="1" Y="3716"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit15>
       <Unit16>
         <Filename Value="uModulAPI.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uModulAPI"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="25"/>
-        <CursorPos X="96" Y="40"/>
-        <UsageCount Value="68"/>
-        <Loaded Value="True"/>
+        <TopLine Value="241"/>
+        <CursorPos X="40" Y="228"/>
+        <UsageCount Value="78"/>
       </Unit16>
       <Unit17>
         <Filename Value="C:\Zusatzprogramme\Lazarus\components\virtualtreeview\VirtualTrees.pas"/>
@@ -196,34 +194,30 @@
         <WindowIndex Value="0"/>
         <TopLine Value="31393"/>
         <CursorPos X="1" Y="31408"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="17"/>
       </Unit17>
       <Unit18>
         <Filename Value="modules\clock\clock.lpr"/>
         <UnitName Value="Project1"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="77"/>
         <CursorPos X="1" Y="97"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="11"/>
       </Unit18>
       <Unit19>
         <Filename Value="modules\clock\uClock.pas"/>
         <UnitName Value="uClock"/>
-        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="190"/>
         <CursorPos X="1" Y="215"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="11"/>
       </Unit19>
       <Unit20>
         <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\objpas\sysutils\sysstrh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="209"/>
         <CursorPos X="10" Y="224"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="11"/>
       </Unit20>
       <Unit21>
         <Filename Value="uColorForm.pas"/>
@@ -234,7 +228,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="221"/>
         <CursorPos X="45" Y="240"/>
-        <UsageCount Value="54"/>
+        <UsageCount Value="64"/>
       </Unit21>
       <Unit22>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\forms.pp"/>
@@ -242,7 +236,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="592"/>
         <CursorPos X="14" Y="607"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit22>
       <Unit23>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\comctrls.pp"/>
@@ -250,73 +244,71 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1854"/>
         <CursorPos X="36" Y="1869"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
       </Unit23>
       <Unit24>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\interfaces\win32\win32callback.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1084"/>
         <CursorPos X="1" Y="1099"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit24>
       <Unit25>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\include\rasterimage.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="502"/>
         <CursorPos X="1" Y="521"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="14"/>
       </Unit25>
       <Unit26>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\include\custombitmap.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="290"/>
         <CursorPos X="91" Y="316"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="14"/>
       </Unit26>
       <Unit27>
         <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\inc\threadh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="134"/>
         <CursorPos X="11" Y="149"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit27>
       <Unit28>
         <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\win\wininc\func.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="43"/>
         <CursorPos X="10" Y="58"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit28>
       <Unit29>
         <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\win\wininc\struct.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="208"/>
         <CursorPos X="6" Y="223"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit29>
       <Unit30>
         <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\inc\objpash.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="186"/>
         <CursorPos X="21" Y="201"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit30>
       <Unit31>
         <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\win\tthread.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="20"/>
         <CursorPos X="3" Y="22"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
       </Unit31>
       <Unit32>
         <Filename Value="uMCF.pas"/>
         <UnitName Value="uMCF"/>
-        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="680"/>
         <CursorPos X="1" Y="695"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="11"/>
       </Unit32>
       <Unit33>
         <Filename Value="modules\download\uDownload.pas"/>
@@ -324,14 +316,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="234"/>
         <CursorPos X="47" Y="253"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit33>
       <Unit34>
         <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\win\wininc\base.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="186"/>
         <CursorPos X="6" Y="201"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit34>
       <Unit35>
         <Filename Value="modules\upload\uUpload.pas"/>
@@ -339,144 +331,192 @@
         <WindowIndex Value="0"/>
         <TopLine Value="231"/>
         <CursorPos X="14" Y="245"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit35>
       <Unit36>
         <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\packages\fcl-base\src\contnrs.pp"/>
         <UnitName Value="contnrs"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="66"/>
         <CursorPos X="25" Y="72"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="9"/>
       </Unit36>
+      <Unit37>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.1\source\packages\fcl-base\src\contnrs.pp"/>
+        <UnitName Value="contnrs"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="199"/>
+        <CursorPos X="66" Y="217"/>
+        <UsageCount Value="9"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.1\source\rtl\objpas\fgl.pp"/>
+        <UnitName Value="fgl"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="86"/>
+        <CursorPos X="3" Y="41"/>
+        <UsageCount Value="9"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.1\source\rtl\objpas\sysutils\sysutilh.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="272"/>
+        <CursorPos X="14" Y="290"/>
+        <UsageCount Value="9"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.1\source\rtl\objpas\sysutils\sysutils.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="147"/>
+        <CursorPos X="9" Y="151"/>
+        <UsageCount Value="9"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\include\customlistbox.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="179"/>
+        <CursorPos X="1" Y="197"/>
+        <UsageCount Value="10"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.1\source\rtl\win\sysosh.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="15"/>
+        <CursorPos X="3" Y="33"/>
+        <UsageCount Value="10"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.1\source\rtl\objpas\classes\classesh.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1528"/>
+        <CursorPos X="21" Y="1550"/>
+        <UsageCount Value="10"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.1\source\rtl\win\tthread.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="20"/>
+        <CursorPos X="3" Y="22"/>
+        <UsageCount Value="10"/>
+      </Unit44>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="28" HistoryIndex="27">
       <Position1>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="447" Column="1" TopLine="432"/>
+        <Caret Line="355" Column="1" TopLine="336"/>
       </Position1>
       <Position2>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="351" Column="1" TopLine="336"/>
+        <Caret Line="308" Column="1" TopLine="290"/>
       </Position2>
       <Position3>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="352" Column="1" TopLine="336"/>
+        <Caret Line="323" Column="1" TopLine="294"/>
       </Position3>
       <Position4>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="353" Column="1" TopLine="336"/>
+        <Caret Line="353" Column="22" TopLine="336"/>
       </Position4>
       <Position5>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="354" Column="1" TopLine="336"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="160" Column="32" TopLine="153"/>
       </Position5>
       <Position6>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="362" Column="1" TopLine="337"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="618" Column="72" TopLine="612"/>
       </Position6>
       <Position7>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="354" Column="1" TopLine="337"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="265" Column="1" TopLine="253"/>
       </Position7>
       <Position8>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="358" Column="1" TopLine="337"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="498" Column="3" TopLine="434"/>
       </Position8>
       <Position9>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="354" Column="1" TopLine="337"/>
+        <Caret Line="269" Column="53" TopLine="256"/>
       </Position9>
       <Position10>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="358" Column="1" TopLine="337"/>
+        <Caret Line="271" Column="43" TopLine="251"/>
       </Position10>
       <Position11>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="354" Column="1" TopLine="337"/>
+        <Caret Line="283" Column="17" TopLine="240"/>
       </Position11>
       <Position12>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="364" Column="1" TopLine="339"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="113" Column="47" TopLine="95"/>
       </Position12>
       <Position13>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="354" Column="1" TopLine="339"/>
+        <Caret Line="283" Column="17" TopLine="240"/>
       </Position13>
       <Position14>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="366" Column="1" TopLine="341"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="257" Column="20" TopLine="245"/>
       </Position14>
       <Position15>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="372" Column="1" TopLine="357"/>
+        <Caret Line="189" Column="21" TopLine="295"/>
       </Position15>
       <Position16>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="374" Column="1" TopLine="357"/>
+        <Caret Line="271" Column="16" TopLine="248"/>
       </Position16>
       <Position17>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="448" Column="1" TopLine="433"/>
+        <Caret Line="273" Column="77" TopLine="248"/>
       </Position17>
       <Position18>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="449" Column="1" TopLine="433"/>
+        <Caret Line="125" Column="76" TopLine="117"/>
       </Position18>
       <Position19>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="450" Column="1" TopLine="433"/>
+        <Caret Line="189" Column="22" TopLine="160"/>
       </Position19>
       <Position20>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="451" Column="1" TopLine="433"/>
+        <Caret Line="1855" Column="27" TopLine="1847"/>
       </Position20>
       <Position21>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="452" Column="1" TopLine="433"/>
+        <Caret Line="1868" Column="32" TopLine="1838"/>
       </Position21>
       <Position22>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="453" Column="1" TopLine="433"/>
+        <Caret Line="1963" Column="3" TopLine="1968"/>
       </Position22>
       <Position23>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="454" Column="1" TopLine="433"/>
+        <Caret Line="286" Column="50" TopLine="259"/>
       </Position23>
       <Position24>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="455" Column="1" TopLine="433"/>
+        <Caret Line="2038" Column="161" TopLine="2023"/>
       </Position24>
       <Position25>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="449" Column="16" TopLine="439"/>
+        <Caret Line="216" Column="27" TopLine="190"/>
       </Position25>
       <Position26>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="457" Column="1" TopLine="439"/>
+        <Caret Line="286" Column="27" TopLine="257"/>
       </Position26>
       <Position27>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="458" Column="1" TopLine="439"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="82" Column="15" TopLine="64"/>
       </Position27>
       <Position28>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="472" Column="1" TopLine="457"/>
+        <Filename Value="uUSBDisplay.pas"/>
+        <Caret Line="49" Column="16" TopLine="14"/>
       </Position28>
-      <Position29>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="473" Column="1" TopLine="457"/>
-      </Position29>
-      <Position30>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="493" Column="59" TopLine="476"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="9"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
       <Filename Value="HardwareMonitor"/>
@@ -508,15 +548,14 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="1">
       <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsGlobal"/>
+        <WatchKind Value="wpkWrite"/>
         <Source Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.0\source\rtl\win\tthread.inc"/>
         <Line Value="22"/>
       </Item1>
-      <Item2>
-        <Source Value="uMainForm.pas"/>
-        <Line Value="434"/>
-      </Item2>
     </BreakPoints>
     <Watches Count="3">
       <Item1>
@@ -541,4 +580,5 @@
       </Item3>
     </Exceptions>
   </Debugging>
+  <EditorMacros Count="0"/>
 </CONFIG>

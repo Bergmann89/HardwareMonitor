@@ -11,6 +11,9 @@ type
   EUSBDisplay = class(Exception);
   TTouchMode = (tmPenDown, tmPenMove, tmPenUp);
   TTouchEvent = procedure(aSender: TObject; aPoint: TPoint; aPressure: Byte; aMode: TTouchMode) of object;
+
+  { TUSBDisplay }
+
   TUSBDisplay = class(TBitmap)
   private
     fDisplayID: Integer;
@@ -20,12 +23,15 @@ type
     fTouchThread: TThread;
 
     fOnTouch: TTouchEvent;
+    fOnUpdate: TNotifyEvent;
 
     procedure SetTouchInterval(const aValue: Word);
     procedure SetOnTouch(const aValue: TTouchEvent);
     function GetBufferData: Pointer;
     function GetBufferSize: Integer;
     procedure CreateTouchThread;
+  protected
+    procedure TouchEvent(aSender: TObject; aPoint: TPoint; aPressure: Byte; aMode: TTouchMode); virtual;
   public
     property DisplayID: Integer read fDisplayID;
     property DisplayInfo: TDisplayInfo read fDisplayInfo;
@@ -33,7 +39,8 @@ type
     property BufferData: Pointer read GetBufferData;
     property BufferSize: Integer read GetBufferSize;
 
-    property OnTouch: TTouchEvent read fOnTouch write SetOnTouch;
+    property OnTouch : TTouchEvent  read fOnTouch  write SetOnTouch;
+    property OnUpdate: TNotifyEvent read fOnUpdate write fOnUpdate;
 
     procedure Open(const aDisplayID: Cardinal);
     procedure Close;
@@ -75,7 +82,7 @@ const
 procedure TTouchThread.DoTouch;
 begin
   if Assigned(fOnTouch) then
-    fOnTouch(fOwner, fTouchPoint, fTouchPressure, fTouchMode);
+    fOnTouch(self, fTouchPoint, fTouchPressure, fTouchMode);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +131,6 @@ constructor TTouchThread.Create(const aOwner: TUSBDisplay; const aDisplayInfo: T
   const aTouchEvent: TTouchEvent; const aInterval: Word);
 begin
   inherited Create(false);
-  FreeOnTerminate := True;
   fOwner       := aOwner;
   fDisplayInfo := aDisplayInfo;
   fOnTouch     := aTouchEvent;
@@ -179,14 +185,21 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TUSBDisplay.TouchEvent(aSender: TObject; aPoint: TPoint; aPressure: Byte; aMode: TTouchMode);
+begin
+  if Assigned(fOnTouch) then
+    fOnTouch(self, aPoint, aPressure, aMode);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TUSBDisplay.CreateTouchThread;
 begin
   if fDisplayID < 0 then
     exit;
   if Assigned(fTouchThread) then
-    fTouchThread.Terminate;
-  if (fTouchInterval > 0) and Assigned(fOnTouch) then
-    fTouchThread := TTouchThread.Create(self, fDisplayInfo, fOnTouch, fTouchInterval);
+    FreeAndNil(fTouchThread);
+  if (fTouchInterval > 0) then
+    fTouchThread := TTouchThread.Create(self, fDisplayInfo, @TouchEvent, fTouchInterval);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -207,11 +220,10 @@ begin
     fDisplayInfo.Name := 'Dummy Display';
     fDisplayInfo.Width := 480;
     fDisplayInfo.Height := 272;
+    fDisplayInfo.SerialNumber := '0123456789D';
   end;
   fDisplayID := aDisplayID;
-
   SetSize(fDisplayInfo.Width, fDisplayInfo.Height);
-
   SetLength(fBuffer, Width * Height);
   FillChar(fBuffer[0], 2*Length(fBuffer), #0);
 end;
@@ -237,6 +249,8 @@ begin
     exit;
   BitmapTo565(self, fBuffer);
   USBD480_DrawFullScreen(@fDisplayInfo, @fBuffer[0]);
+  if Assigned(fOnUpdate) then
+    fOnUpdate(self);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -251,6 +265,8 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 destructor TUSBDisplay.Destroy;
 begin
+  if Assigned(fTouchThread) then
+    FreeAndNil(fTouchThread);
   Close;
   inherited Destroy;
 end;

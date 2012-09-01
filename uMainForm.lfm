@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 1106
+  Left = 251
   Height = 704
-  Top = 165
+  Top = 128
   Width = 728
   Caption = 'HardwareMonitor'
   ClientHeight = 704
@@ -12,7 +12,7 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '0.9.30.4'
+  LCLVersion = '1.1'
   object PreviewPanel: TPanel
     Left = 4
     Height = 276
@@ -40,9 +40,9 @@ object MainForm: TMainForm
   object DisplaysGroup: TGroupBox
     Left = 492
     Height = 128
-    Top = 432
+    Top = 0
     Width = 232
-    Anchors = [akRight, akBottom]
+    Anchors = [akTop, akRight]
     Caption = 'verfügbare Displays:'
     ClientHeight = 110
     ClientWidth = 228
@@ -62,7 +62,7 @@ object MainForm: TMainForm
   object ModulInfoGroup: TGroupBox
     Left = 492
     Height = 137
-    Top = 285
+    Top = 528
     Width = 232
     Anchors = [akRight, akBottom]
     Caption = 'Modul Info:'
@@ -71,49 +71,49 @@ object MainForm: TMainForm
     TabOrder = 2
     object Label1: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 8
-      Width = 36
+      Width = 35
       Caption = 'Name:'
       ParentColor = False
     end
     object Label2: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 80
-      Width = 34
+      Width = 33
       Caption = 'Autor:'
       ParentColor = False
     end
     object Label3: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 96
-      Width = 33
+      Width = 32
       Caption = 'eMail:'
       ParentColor = False
     end
     object Label4: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 40
-      Width = 43
+      Width = 42
       Caption = 'Version:'
       ParentColor = False
     end
     object Label5: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 56
-      Width = 25
+      Width = 24
       Caption = 'Jahr:'
       ParentColor = False
     end
     object Label6: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 24
-      Width = 31
+      Width = 30
       Caption = 'Datei:'
       ParentColor = False
     end
@@ -168,50 +168,50 @@ object MainForm: TMainForm
   object DisplayInfoGroup: TGroupBox
     Left = 492
     Height = 108
-    Top = 560
+    Top = 132
     Width = 232
-    Anchors = [akRight, akBottom]
+    Anchors = [akTop, akRight]
     Caption = 'Display Info:'
     ClientHeight = 90
     ClientWidth = 228
     TabOrder = 3
     object Label7: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 8
-      Width = 36
+      Width = 35
       Caption = 'Name:'
       ParentColor = False
     end
     object Label8: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 24
-      Width = 43
+      Width = 42
       Caption = 'Version:'
       ParentColor = False
     end
     object Label9: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 40
-      Width = 34
+      Width = 33
       Caption = 'Breite:'
       ParentColor = False
     end
     object Label10: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 56
-      Width = 33
+      Width = 32
       Caption = 'Höhe:'
       ParentColor = False
     end
     object Label11: TLabel
       Left = 6
-      Height = 16
+      Height = 15
       Top = 72
-      Width = 32
+      Width = 31
       Caption = 'Serial:'
       ParentColor = False
     end
@@ -300,7 +300,7 @@ object MainForm: TMainForm
   object ModulesGroup: TGroupBox
     Left = 492
     Height = 276
-    Top = 4
+    Top = 248
     Width = 232
     Anchors = [akTop, akRight, akBottom]
     Caption = 'Module:'
@@ -352,6 +352,7 @@ object MainForm: TMainForm
     Height = 25
     Top = 672
     Width = 116
+    Anchors = [akRight, akBottom]
     Caption = 'speichern'
     OnClick = SaveSettingsBtClick
     TabOrder = 6
@@ -361,6 +362,7 @@ object MainForm: TMainForm
     Height = 25
     Top = 672
     Width = 116
+    Anchors = [akRight, akBottom]
     Caption = 'laden'
     OnClick = LoadSettingsBtClick
     TabOrder = 7
