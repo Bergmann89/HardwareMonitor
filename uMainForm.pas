@@ -178,8 +178,8 @@ procedure TMainForm.OnChangeUpdateRate(Sender: TObject);
 begin
   if fUpdateRate < 50 then
     fUpdateRate := 50;
-//  fHardwareMonitor.UpdateTime := fUpdateRate;
-{$MESSAGE WARNING 'TODO!!!'}
+  if Assigned(fActiveMonitor) then
+    fActiveMonitor.UpdateRate := fUpdateRate;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -271,8 +271,10 @@ begin
   SettingsVST.Enabled     := Assigned(fActiveMonitor);
   PreviewPB.Enabled       := Assigned(fActiveMonitor);
   if Assigned(fActiveMonitor) then begin
+    fUpdateRate := fActiveMonitor.UpdateRate;
     fActiveMonitor.OnUpdate := @MonitorUpdate;
     fActiveMonitor.Update(true);
+    SettingsVST.Repaint;
   end;
 end;
 
@@ -504,8 +506,7 @@ begin
   DispWidthLab.Caption   := format('%d px', [info.Width]);
   DispHeightLab.Caption  := format('%d px', [info.Height]);
   DispSerialLab.Caption  := info.SerialNumber;
-  if Assigned(fDisplays.HardwareMonitor[ID]) then
-    SetActiveMonitor(fDisplays.HardwareMonitor[ID]);
+  SetActiveMonitor(fDisplays.HardwareMonitor[ID]);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

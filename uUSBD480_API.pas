@@ -1,7 +1,7 @@
 unit uUSBD480_API;
 
 {$mode objfpc}{$H+}
-{$DEFINE WORK_THREAD_SAVE}
+{.$DEFINE WORK_THREAD_SAVE}
 
 interface
 
