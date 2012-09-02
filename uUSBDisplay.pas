@@ -16,8 +16,6 @@ type
 
   TUSBDisplay = class(TBitmap)
   private
-    fDisplayID: Integer;
-    fDisplayInfo: TDisplayInfo;
     fBuffer: TRGB565Arr;
     fTouchInterval: Word;
     fTouchTimer: TTimer;
@@ -33,6 +31,9 @@ type
     function GetBufferSize: Integer;
     procedure TouchTimerTick(aSender: TObject);
   protected
+    fDisplayID: Integer;
+    fDisplayInfo: TDisplayInfo;
+
     procedure TouchEvent(aSender: TObject; aPoint: TPoint; aPressure: Byte; aMode: TTouchMode); virtual;
   public
     property DisplayID: Integer read fDisplayID;
@@ -45,6 +46,7 @@ type
     property OnUpdate: TNotifyEvent read fOnUpdate write fOnUpdate;
 
     procedure Open(const aDisplayID: Cardinal);
+    procedure SetStartupImage(const aGraphic: TGraphic);
     procedure Close;
     procedure Update;
 
@@ -152,6 +154,28 @@ begin
   SetSize(fDisplayInfo.Width, fDisplayInfo.Height);
   SetLength(fBuffer, Width * Height);
   FillChar(fBuffer[0], 2*Length(fBuffer), #0);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TUSBDisplay.SetStartupImage(const aGraphic: TGraphic);
+var
+  bmp: Graphics.TBitmap;
+  buffer: TRGB565Arr;
+begin
+  if (fDisplayID >= 0) then begin
+    bmp := Graphics.TBitmap.Create;
+    try
+      bmp.SetSize(Width, Height);
+      bmp.Canvas.StretchDraw(Classes.Rect(0, 0, Width, Height), aGraphic);
+      SetLength(buffer, Width * Height);
+      BitmapTo565(bmp, buffer);
+      if USBD480_SetStartupImage(@fDisplayInfo, @buffer[0], Length(buffer)) <= 0 then
+        raise Exception.Create('unable to change startup image');
+    finally
+      FreeAndNil(bmp);
+    end;
+  end else
+    raise Exception.Create('no display opened');
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

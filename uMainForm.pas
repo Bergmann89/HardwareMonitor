@@ -100,12 +100,13 @@ type
     fFormatSettings: TFormatSettings;
 
     fBgNode: PVirtualNode;
-    fBgFilename: String;
+    fStartupNode: PVirtualNode;
     fUpdateRate: Integer;
     fModulNode: PVirtualNode;
 
     procedure OnChangeModulSizePos(Sender: TObject);
     procedure OnChangeBackground(Sender: TObject);
+    procedure OnChangeStartPic(Sender: TObject);
     procedure OnChangeUpdateRate(Sender: TObject);
     procedure OnChangeSettings(Sender: TObject);
 
@@ -167,6 +168,26 @@ begin
       fActiveMonitor.SetBackground(pic.Graphic);
       fActiveMonitor.Update(true);
       PreviewPB.Repaint;
+    finally
+      pic.Free;
+    end;
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TMainForm.OnChangeStartPic(Sender: TObject);
+var
+  d: PSettingsItemEx;
+  pic: TPicture;
+begin
+  if not Assigned(fActiveMonitor) then
+    exit;
+  d := SettingsVST.GetNodeData(fStartupNode);
+  if Assigned(d) and (d^.i.DataType = dtPicture) and FileExists(PString(d^.i.Data)^) then begin
+    pic := TPicture.Create;
+    try
+      pic.LoadFromFile(PString(d^.i.Data)^);
+      fActiveMonitor.SetStartupImage(pic.Graphic);
     finally
       pic.Free;
     end;
@@ -530,10 +551,19 @@ begin
   d := SettingsVST.GetNodeData(fBgNode);
   FillChar(d^, SizeOf(d^), 0);
   d^.i.Name := 'Hintergrund';
-  fBgFilename := '';
   d^.i.DataType := dtPicture;
-  d^.i.Data := @fBgFilename;
+  New(PString(d^.i.Data));
+  PString(d^.i.Data)^ := '';
   d^.Event := @OnChangeBackground;
+
+  fStartupNode := SettingsVST.AddChild(nil);
+  d := SettingsVST.GetNodeData(fStartupNode);
+  FillChar(d^, SizeOf(d^), 0);
+  d^.i.Name := 'Startbild';
+  d^.i.DataType := dtPicture;
+  New(PString(d^.i.Data));
+  PString(d^.i.Data)^ := '';
+  d^.Event := @OnChangeStartPic;
 
   n := SettingsVST.AddChild(nil);
   d := SettingsVST.GetNodeData(n);
@@ -686,10 +716,13 @@ procedure TMainForm.LoadSettingsBtClick(Sender: TObject);
 var
   mcf: TmcfFile;
 begin
+  if not Assigned(fActiveMonitor) then
+    exit;
   if OpenDialog.Execute then begin
     mcf := TmcfFile.Create;
     try
-      {$MESSAGE WARNING 'TODO!!!'}
+      mcf.LoadFromFile(OpenDialog.FileName);
+      fActiveMonitor.LoadFromFile(mcf, fModules);
       SettingsVST.Repaint;
       UpdateActiveModulesLB;
       UpdateDisplaysCLB;
@@ -721,9 +754,9 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.PreviewPBMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
+  fMouseDownPos := Point(X, Y);
   if Assigned(fActiveModul) then begin
     fMouseDown := IsOnModul(fActiveModul, X, Y);
-    fMouseDownPos := Point(X, Y);
     fOldModulPos  := fActiveModul.Position;
     fOldModulSize := fActiveModul.SmallSize;
   end;
@@ -740,7 +773,10 @@ procedure TMainForm.PreviewPBMouseMove(Sender: TObject; Shift: TShiftState; X, Y
 var
   dX, dY: Integer;
 begin
-  if not Assigned(fActiveModul) or fPreviewNeedUpdate then
+  if not Assigned(fActiveMonitor) or
+     not Assigned(fActiveModul) or
+     fPreviewNeedUpdate or
+     Assigned(fActiveMonitor.LargeModul) then
     exit;
 
   if fMouseDown = 0 then begin
@@ -843,10 +879,18 @@ procedure TMainForm.SaveSettingsBtClick(Sender: TObject);
 var
   mcf: TmcfFile;
 begin
+  if not Assigned(fActiveMonitor) then
+    exit;
   mcf := TmcfFile.Create;
   try
     if SaveDialog.Execute then begin
-      {$MESSAGE WARNING 'TODO!!!'}
+      if FileExists(SaveDialog.FileName) and (MessageDlg('Datei überscheriben?',
+        'Die Datei exestiert bereits. Soll die Datei überschreiben werden?', mtConfirmation, [mbYes, mbNo], 0) = mrNo) then
+          exit;
+      fActiveMonitor.SaveToFile(mcf);
+      mcf.SetString('Background', ExtractFileNameWithoutExt(SaveDialog.FileName)+'.bmp');
+      fActiveMonitor.Background.SaveToFile(mcf.GetString('Background'));
+      mcf.SaveToFile(SaveDialog.FileName);
     end;
   finally
     mcf.Free;
@@ -972,6 +1016,8 @@ begin
   d := SettingsVST.GetNodeData(Node);
   if Assigned(d) then begin
     d^.i.Name := '';
+    if (Node = fBgNode) or (Node = fStartupNode) then
+      Dispose(PString(d^.i.Data));
   end;
 end;
 
@@ -987,26 +1033,35 @@ begin
       0: CellText := d^.i.Name;
       1: begin
         case d^.i.DataType of
-          dtFile, dtPicture: if Assigned(d^.i.Data) and (PString(d^.i.Data)^ <> '') then
+          dtFile, dtPicture:
+            if (Node = fBgNode) or (Node = fStartupNode) then
+              CellText := '[ändern]'
+            else if Assigned(d^.i.Data) and (PString(d^.i.Data)^ <> '') then
               CellText := MiniMizeName(PString(d^.i.Data)^, SettingsVST.Canvas, SettingsVST.Header.Columns[1].Width)
             else
               CellText := '[leer]';
-          dtString: if Assigned(d^.i.Data) then
+          dtString, dtIdentStr:
+            if Assigned(d^.i.Data) then
               CellText := PString(d^.i.Data)^
             else
               CellText := '[leer]';
-          dtBool: if Assigned(d^.i.Data) and PBoolean(d^.i.Data)^ then
+          dtBool:
+            if Assigned(d^.i.Data) and PBoolean(d^.i.Data)^ then
               CellText := 'true'
             else
               CellText := 'false';
-          dtInt32: if Assigned(d^.i.Data) then
-            CellText := IntToStr(PInteger(d^.i.Data)^);
-          dtFloat32: if Assigned(d^.i.Data) then
-            CellText := ToStr(PSingle(d^.i.Data)^, -3);
-          dtColor: if Assigned(d^.i.Data) then
-            CellText := IntToHex(PCardinal(d^.i.Data)^, 8);
-          dtByte: if Assigned(d^.i.Data) then
-            CellText := IntToStr(PByte(d^.i.Data)^);
+          dtInt32:
+            if Assigned(d^.i.Data) then
+              CellText := IntToStr(PInteger(d^.i.Data)^);
+          dtFloat32:
+            if Assigned(d^.i.Data) then
+              CellText := ToStr(PSingle(d^.i.Data)^, -3);
+          dtColor:
+            if Assigned(d^.i.Data) then
+              CellText := IntToHex(PCardinal(d^.i.Data)^, 8);
+          dtByte:
+            if Assigned(d^.i.Data) then
+              CellText := IntToStr(PByte(d^.i.Data)^);
         else
           CellText := '';
         end;
@@ -1069,6 +1124,9 @@ begin
         PString(d^.i.Data)^ := NewText;
         if Assigned(d^.Event) then
           d^.Event(self);
+      end;
+      dtIdentStr: begin
+        {$MESSAGE WARNING 'TODO: OpenHardwareBrowser'}
       end;
     end;
 

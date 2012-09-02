@@ -37,7 +37,7 @@ type
   PModulFontDataEx = ^TModulFontDataEx;
   TModulFontStyle = (FontStyleBold = 1, FontStyleItalic = 2, FontStyleUnderline = 4, FontStyleStrikeout = 8);
 
-  TDataType = (dtInt32, dtFloat32, dtBool, dtString, dtFile, dtPicture, dtColor, dtFont, dtByte);
+  TDataType = (dtInt32, dtFloat32, dtBool, dtString, dtFile, dtPicture, dtColor, dtFont, dtByte, dtIdentStr);
   TSettingsItem = packed record
     Name: PChar;
     Min, Max: Single;

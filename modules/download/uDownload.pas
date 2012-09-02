@@ -250,8 +250,8 @@ begin
 
   fGraphic.Clear(fBgColor);
 
-  fBrush.SetColor($FEFFFFFF);
-  s := 'Download';
+  fBrush.SetColor(fFontData.Color);
+  s := 'Download';  
   fGraphic.DrawString(s, Length(s), fFont, MakePoint(4.0, 4.0), nil, fBrush);
   s := FormatByte((fUpdateThread as TwmiDownloadThread).Download.StartUp) + sLineBreak +
     FormatByte((fUpdateThread as TwmiDownloadThread).Download.Currently);
@@ -312,7 +312,7 @@ procedure TDownload.SetSettings(const aData: PSettingsItem);
 begin
   inherited SetSettings(aData);
   CheckColor(fFontData.Color);
-  CheckCOlor(fBgColor);
+  CheckColor(fBgColor);
   CheckColor(fColor);
   CreateFonts;
 end;

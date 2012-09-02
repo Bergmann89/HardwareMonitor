@@ -276,17 +276,23 @@ type
     property Modules[const aIndex: Integer]: THardwareMonitorModul read GetModul;
     property UpdateRate: Cardinal read GetUpdateRate write SetUpdateRate;
     property LargeModul: THardwareMonitorModul read fLargeModul;
+    property Background: TBitmap read fBackground;
 
     function AddModul(const aLibFile: String): THardwareMonitorModul;
     function GetModulByName(const aName: String): THardwareMonitorModul;
     procedure DelModul(const aIndex: Integer);
+
     procedure UpdateFrameBuffer;
     procedure Update(const aUpdateFrameBuffer: Boolean = false);
     procedure SetBackground(const aGraphic: TGraphic);
     procedure SetSize(AWidth, AHeight: integer); override;
     procedure EmulateTouch(const aPoint: TPoint);
+
     procedure LockFrameBuffer;
     procedure UnlockFrameBuffer;
+
+    procedure SaveToFile(const aSection: TmcfSection);
+    procedure LoadFromFile(const aSection: TmcfSection; const aModules: TModulesInfo);
 
     constructor Create(const aDisplayID: Integer);
     destructor Destroy; override;
@@ -524,7 +530,7 @@ begin
           Dispose(PSingle(Data));
         dtBool:
           Dispose(PBoolean(Data));
-        dtString, dtFile, dtPicture:
+        dtString, dtFile, dtPicture, dtIdentStr:
           Dispose(PString(Data));
         dtColor:
           Dispose(PCardinal(Data));
@@ -634,7 +640,7 @@ begin
           New(PBoolean(Data));
           PBoolean(Data)^ := PBoolean(p^.Data)^;
         end;
-        dtString, dtFile, dtPicture: begin
+        dtString, dtFile, dtPicture, dtIdentStr: begin
           New(PString(Data));
           PString(Data)^ := PChar(p^.Data);
         end;
@@ -694,7 +700,7 @@ begin
           New(PBoolean(Data));
           PBoolean(Data)^ := PBoolean(p^.Data)^;
         end;
-        dtString, dtFile, dtPicture: begin
+        dtString, dtFile, dtPicture, dtIdentStr: begin
           PChar(Data) := PChar(PString(p^.Data)^);
         end;
         dtColor: begin
@@ -724,7 +730,7 @@ begin
           Dispose(PSingle(Data));
         dtBool:
           Dispose(PBoolean(Data));
-        dtString, dtFile, dtPicture:
+        dtString, dtFile, dtPicture, dtIdentStr:
           PChar(Data) := '';
         dtColor:
           Dispose(PCardinal(Data));
@@ -792,7 +798,7 @@ begin
             SetFloat(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'), PSingle(fSettingsArr[i].Data)^);
           dtBool:
             SetBool(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'), Boolean(PBoolean(fSettingsArr[i].Data)^));
-          dtString, dtFile, dtPicture:
+          dtString, dtFile, dtPicture, dtIdentStr:
             SetString(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'), PString(fSettingsArr[i].Data)^);
           dtColor:
             SetInt(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'), PCardinal(fSettingsArr[i].Data)^);
@@ -861,7 +867,7 @@ begin
             PBoolean(fSettingsArr[i].Data)^ := Byte(GetBool(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'),
               Boolean(PBoolean(fSettingsArr[i].Data)^)));
           end;
-          dtString, dtFile, dtPicture:
+          dtString, dtFile, dtPicture, dtIdentStr:
             PString(fSettingsArr[i].Data)^ := GetString(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'),
               PString(fSettingsArr[i].Data)^);
           dtColor:
@@ -1972,21 +1978,7 @@ begin
     f.BlendOp             := AC_SRC_OVER;
     f.SourceConstantAlpha := 255;
 
-  //UPDATE
-  {
-    EnterCriticalSection(fActiveModulesCS);
-    try
-      for i := 0 to fActiveModules.Count-1 do
-        with (fActiveModules[i] as THardwareMonitorModul) do begin
-          Resize;
-          Update;
-        end;
-    finally
-      LeaveCriticalSection(fActiveModulesCS);
-    end;
-  }
-
-  //DRAW
+//DRAW
     EnterCriticalSection(fModulesCS);
     try
       if Assigned(fLargeModul) then begin
@@ -2012,6 +2004,64 @@ end;
 procedure THardwareMonitor.UnlockFrameBuffer;
 begin
   LeaveCriticalSection(fFrameBufferCS);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.SaveToFile(const aSection: TmcfSection);
+var
+  i: Integer;
+begin
+  with aSection.Sections['DisplayInfo'] do begin
+    SetInt('Width',       fDisplayInfo.Width);
+    SetInt('Height',      fDisplayInfo.Height);
+    SetInt('PixelFormat', fDisplayInfo.PixelFormat);
+    SetInt('Handle',      fDisplayInfo.Handle);
+    SetInt('Version',     fDisplayInfo.Version);
+    SetString('Name',     fDisplayInfo.Name);
+    SetString('Serial',   fDisplayInfo.SerialNumber);
+  end;
+  aSection.SetInt('UpdateRate', UpdateRate);
+  aSection.SetInt('ModulCount', fModules.Count);
+  for i := 0 to fModules.Count-1 do
+    with aSection.Sections['Modules'] do
+      fModules[i].SaveToFile(Sections[IntToStr(i)]);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure THardwareMonitor.LoadFromFile(const aSection: TmcfSection; const aModules: TModulesInfo);
+
+  function FindModul(const aLibFile, aVersion: String): Integer;
+  var
+    i: Integer;
+  begin
+    for i := 0 to aModules.Count-1 do
+      if (ExtractFileName(aModules[i].libName) = aLibFile) and
+         (aModules[i].Version = aVersion) then begin
+        result := i;
+        exit;
+      end;
+    result := -1;
+  end;
+
+var
+  i, c, id: Integer;
+begin
+  with aSection do begin
+    if FileExists(GetString('Background', '')) then
+      fBackground.LoadFromFile(GetString('Background', ''));
+    UpdateRate := GetInt('UpdateRate', 250);
+    c := GetInt('ModulCount', 0);
+    with Sections['Modules'] do
+      for i := 0 to c-1 do begin
+        with Sections[IntToStr(i)] do begin
+          id := FindModul(GetString('LibName', ''), GetString('LibVersion', ''));
+          if (id >= 0) then begin
+            AddModul(aModules[id].libName).LoadFromFile(aSection.Sections['Modules'].Sections[IntToStr(i)]);
+          end;
+        end;
+      end;
+  end;
+  Update(true);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

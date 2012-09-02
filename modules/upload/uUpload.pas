@@ -250,8 +250,8 @@ begin
 
   fGraphic.Clear(fBgColor);
 
-  fBrush.SetColor($FEFFFFFF);
   s := 'Upload';
+  fBrush.SetColor(fFontData.Color);
   fGraphic.DrawString(s, Length(s), fFont, MakePoint(4.0, 4.0), nil, fBrush);
   s := FormatByte((fUpdateThread as TwmiUploadThread).Upload.StartUp) + sLineBreak +
     FormatByte((fUpdateThread as TwmiUploadThread).Upload.Currently);

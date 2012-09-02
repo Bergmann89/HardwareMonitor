@@ -32,7 +32,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <HostApplicationFilename Value="G:\Eigene Datein\Delphi Projekte\_Active Projekte\HardwareDisplay\Programm\HardwareMonitor.exe"/>
+        <HostApplicationFilename Value="G:\Eigene Datein\Projekte\_Active Projekte\HardwareMonitor\Programm\HardwareMonitor.exe"/>
       </local>
     </RunParams>
     <RequiredPackages Count="1">
@@ -45,11 +45,10 @@
         <Filename Value="download.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="download"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="49"/>
-        <CursorPos X="43" Y="70"/>
+        <TopLine Value="46"/>
+        <CursorPos X="27" Y="64"/>
         <UsageCount Value="24"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -57,10 +56,11 @@
         <Filename Value="uDownload.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uDownload"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="195"/>
-        <CursorPos X="38" Y="206"/>
+        <TopLine Value="99"/>
+        <CursorPos X="65" Y="118"/>
         <UsageCount Value="24"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -112,7 +112,7 @@
         <UsageCount Value="11"/>
       </Unit7>
     </Units>
-    <JumpHistory Count="22" HistoryIndex="21">
+    <JumpHistory Count="23" HistoryIndex="22">
       <Position1>
         <Filename Value="download.pas"/>
         <Caret Line="24" Column="14" TopLine="10"/>
@@ -201,10 +201,14 @@
         <Filename Value="uDownload.pas"/>
         <Caret Line="42" Column="18" TopLine="27"/>
       </Position22>
+      <Position23>
+        <Filename Value="uDownload.pas"/>
+        <Caret Line="261" Column="36" TopLine="1"/>
+      </Position23>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="9"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
       <Filename Value="..\download"/>
@@ -251,4 +255,5 @@
       </Item3>
     </Exceptions>
   </Debugging>
+  <EditorMacros Count="0"/>
 </CONFIG>

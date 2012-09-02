@@ -1,0 +1,113 @@
+UpdateRate = 1000;
+ModulCount = 4;
+Background = 'G:\Eigene Datein\Projekte\_Active Projekte\HardwareMonitor\Programm\save.bmp';
+DisplayInfo:
+  Width = 480;
+  Height = 272;
+  PixelFormat = 54;
+  Handle = 0;
+  Version = 0;
+  Name = USBD480-LQ043;
+  Serial = 1112080015;
+end;
+Modules:
+  0:
+    Name = 'Clock 1.0.0';
+    LibName = 'clock.dll';
+    LibVersion = '1.0.0';
+    Position:
+      x = 4;
+      y = 4;
+    end;
+    SmallSize:
+      x = 200;
+      y = 80;
+    end;
+    Modul:
+      Datumsformat = 'ddd dd. mmm yyyy';
+      GrÃ¶ÃŸe_der_Sec__Anzeige = '0.75';
+      GrÃ¶ÃŸe_der_Datum_Anzeige = '0.400000005960465';
+      Hintergrundfarbe = 1610612736;
+      Font:
+        Name = ððððððððððððï¾­Þï¾­ÞaÀðC|ðC¥Æ0;
+        Color = 4294967295;
+        Size = 0;
+        Style = 0;
+      end;
+    end;
+  end;
+  1:
+    Name = 'CPU Load 1.0.0';
+    LibName = 'cpu_load.dll';
+    LibVersion = '1.0.0';
+    Position:
+      x = 4;
+      y = 88;
+    end;
+    SmallSize:
+      x = 200;
+      y = 180;
+    end;
+    Modul:
+      Farbe = 4278190079;
+      Prim__Hintergrundfarbe = 1610612736;
+      Sek__Hintergrundfarbe = 1627389951;
+      Diagramm_autom__anpassen = 0;
+      Datenabstand = -1379995901;
+      Font:
+        Name = ððððððï¾­Þ­ºð­ºð­ºaÀcØû/;
+        Color = 4278190079;
+        Size = 12;
+        Style = 1;
+      end;
+    end;
+  end;
+  2:
+    Name = 'Netzwerk Download 1.0.0';
+    LibName = 'download.dll';
+    LibVersion = '1.0.0';
+    Position:
+      x = 208;
+      y = 4;
+    end;
+    SmallSize:
+      x = 268;
+      y = 65;
+    end;
+    Modul:
+      Farbe = 4278190079;
+      Hintergrundfarbe = 1610612736;
+      Liniendiagramm = 1;
+      Font:
+        Name = ððððððï¾­Þ­ºð­ºð­ºaÀ{èü/;
+        Color = 4278190079;
+        Size = 12;
+        Style = 1;
+      end;
+    end;
+  end;
+  3:
+    Name = 'Netzwerk Upload 1.0.0';
+    LibName = 'upload.dll';
+    LibVersion = '1.0.0';
+    Position:
+      x = 208;
+      y = 73;
+    end;
+    SmallSize:
+      x = 268;
+      y = 65;
+    end;
+    Modul:
+      Farbe = 4278190079;
+      Hintergrundfarbe = 1610612736;
+      Liniendiagramm = 1;
+      Font:
+        Name = ððððððï¾­Þ­ºð­ºð­ºaÀŸÜüC+N¥Æ0;
+        Color = 4278190079;
+        Size = 12;
+        Style = 1;
+      end;
+    end;
+  end;
+end;
