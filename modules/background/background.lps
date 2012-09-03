@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="background.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="background"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="99"/>
+        <CursorPos X="61" Y="120"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="uBackground.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uBackground"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="37"/>
+        <CursorPos X="24" Y="79"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <UnitName Value="uModulAPI"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="3" Y="16"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit2>
+    </Units>
+    <General>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <JumpHistory Count="13" HistoryIndex="12">
+      <Position1>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="15" Column="5" TopLine="1"/>
+      </Position1>
+      <Position2>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="25" Column="24" TopLine="1"/>
+      </Position2>
+      <Position3>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="58" Column="60" TopLine="32"/>
+      </Position3>
+      <Position4>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="20" Column="28" TopLine="1"/>
+      </Position4>
+      <Position5>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="30" Column="34" TopLine="11"/>
+      </Position5>
+      <Position6>
+        <Filename Value="background.lpr"/>
+        <Caret Line="25" Column="19" TopLine="12"/>
+      </Position6>
+      <Position7>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="41" Column="34" TopLine="34"/>
+      </Position7>
+      <Position8>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="8" Column="53" TopLine="1"/>
+      </Position8>
+      <Position9>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="40" Column="50" TopLine="22"/>
+      </Position9>
+      <Position10>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="20" Column="33" TopLine="2"/>
+      </Position10>
+      <Position11>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="40" Column="3" TopLine="35"/>
+      </Position11>
+      <Position12>
+        <Filename Value="background.lpr"/>
+        <Caret Line="8" Column="31" TopLine="1"/>
+      </Position12>
+      <Position13>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="57" Column="43" TopLine="55"/>
+      </Position13>
+    </JumpHistory>
+  </ProjectSession>
+  <EditorMacros Count="0"/>
+</CONFIG>

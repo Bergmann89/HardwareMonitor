@@ -789,10 +789,16 @@ procedure TmcfFile.LoadFromStream(const aStream: TStream);
   var
     buf: String;
     c: Char;
+    isStr: Boolean;
   begin
     buf := '';
     c := NextChar;
-    while (c <> #0) and (c <> ';') do begin
+    isStr := false;
+    while (c <> #0) do begin
+      if (c = '''') then
+        isStr := not isStr;
+      if (c = ';') and not isStr then
+        break;
       buf := buf + c;
       c := NextChar;
     end;

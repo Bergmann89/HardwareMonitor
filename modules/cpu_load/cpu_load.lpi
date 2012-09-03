@@ -55,10 +55,11 @@
         <Filename Value="uCPULoad.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uCPULoad"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="95"/>
-        <CursorPos X="33" Y="107"/>
+        <TopLine Value="119"/>
+        <CursorPos X="30" Y="125"/>
         <UsageCount Value="41"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -76,11 +77,10 @@
       <Unit3>
         <Filename Value="..\..\uHardwareMonitor.pas"/>
         <UnitName Value="uHardwareMonitor"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="841"/>
-        <CursorPos X="50" Y="870"/>
+        <TopLine Value="613"/>
+        <CursorPos X="51" Y="858"/>
         <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit3>

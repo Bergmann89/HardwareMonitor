@@ -184,27 +184,46 @@ begin
 end;
 
 procedure TBasicModul.SetSettings(const aData: PSettingsItem);
+
+  procedure CheckColor(var aColor: Cardinal);
+  begin
+    if (aColor shr 24) >= $FF then
+      aColor := (aColor and $FFFFFF) or $FE000000;
+  end;
+
 var
   i: Integer;
   p: PSettingsItem;
+  s: String;
 begin
   p := aData;
   for i := 0 to High(fSettingsArr) do with fSettingsArr[i] do begin
     case DataType of
-      dtInt32:
+      dtInt32: begin
         PInteger(Data)^ := PInteger(p^.Data)^;
-      dtFloat32:
+      end;
+      dtFloat32: begin
         PSingle(Data)^ := PSingle(p^.Data)^;
-      dtBool:
+      end;
+      dtBool: begin
         PBoolean(Data)^ := PBoolean(p^.Data)^;
-      dtString, dtFile, dtPicture:
-        PChar(Data) := PChar(p^.Data);
-      dtColor:
+      end;
+      dtString, dtFile, dtPicture, dtIdentStr: begin
+        Data := PAnsiChar(s);
+      end;
+      dtColor: begin
         PCardinal(Data)^ := PCardinal(p^.Data)^;
-      dtFont:
-        PModulFontData(Data)^ := PModulFontData(p^.Data)^;
-      dTByte:
+        CheckColor(PCardinal(Data)^);
+      end;
+      dtFont: begin
+        PModulFontData(Data)^.Color := PModulFontData(p^.Data)^.Color;
+        PModulFontData(Data)^.Size  := PModulFontData(p^.Data)^.Size;
+        PModulFontData(Data)^.Style := PModulFontData(p^.Data)^.Style;
+        PModulFontData(Data)^.Name  := PModulFontData(p^.Data)^.Name;
+      end;
+      dTByte: begin
         PByte(Data)^ := PByte(p^.Data)^;
+      end;
     end;
     inc(p);
   end;

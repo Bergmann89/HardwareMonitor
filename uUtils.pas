@@ -10,6 +10,8 @@ uses
 type
   TRGB565Arr = packed array of Word;
 
+function VarToStr(const v: Variant): String;
+function VarToFloat(const v: Variant): Single;
 function ToRGB565(const r, g, b: Byte): Word;
 function ToRGB565f(const r, g, b: Single): Word;
 procedure BitmapTo565(const aBitmap: Graphics.TBitmap; var aBuffer: TRGB565Arr);
@@ -20,6 +22,26 @@ implementation
 
 uses
   Math;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function VarToStr(const v: Variant): String;
+begin
+  result := '';
+  if (TVarData(v).vtype <> varempty) and
+     (TVarData(v).vtype <> varnull) and
+     (TVarData(v).vtype <> varerror) then
+    result := v;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function VarToFloat(const v: Variant): Single;
+begin
+  result := 0;
+  if (TVarData(v).vtype <> varempty) and
+     (TVarData(v).vtype <> varnull) and
+     (TVarData(v).vtype <> varerror) then
+    result := v;
+end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function ToRGB565(const r, g, b: Byte): Word;

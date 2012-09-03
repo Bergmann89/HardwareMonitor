@@ -672,7 +672,6 @@ end;
 procedure THardwareMonitorModul.SetSettings;
 var
   arr: array of TSettingsItem;
-
   p: PSettingsItem;
   i: Integer;
 begin

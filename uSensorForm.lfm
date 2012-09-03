@@ -1,0 +1,81 @@
+object SensorForm: TSensorForm
+  Left = 610
+  Height = 612
+  Top = 164
+  Width = 523
+  Caption = 'Sensoren'
+  ClientHeight = 612
+  ClientWidth = 523
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  Position = poScreenCenter
+  LCLVersion = '1.1'
+  object OKBt: TButton
+    Left = 363
+    Height = 25
+    Top = 580
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'OK'
+    ModalResult = 1
+    OnClick = OKBtClick
+    TabOrder = 0
+  end
+  object CancelBt: TButton
+    Left = 443
+    Height = 25
+    Top = 580
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Abbrechen'
+    ModalResult = 2
+    TabOrder = 1
+  end
+  object SensorVST: TVirtualStringTree
+    Left = 8
+    Height = 564
+    Top = 8
+    Width = 507
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Color = clWhite
+    DefaultText = 'Node'
+    Header.AutoSizeIndex = 0
+    Header.Columns = <    
+      item
+        Position = 0
+        Text = 'Sensor'
+        Width = 250
+      end    
+      item
+        Position = 1
+        Text = 'Wert'
+        Width = 75
+      end    
+      item
+        Position = 2
+        Text = 'Min'
+        Width = 75
+      end    
+      item
+        Position = 3
+        Text = 'Max'
+        Width = 75
+      end>
+    Header.DefaultHeight = 17
+    Header.Height = 20
+    Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
+    TabOrder = 2
+    TreeOptions.SelectionOptions = [toFullRowSelect]
+    OnCompareNodes = SensorVSTCompareNodes
+    OnFreeNode = SensorVSTFreeNode
+    OnGetText = SensorVSTGetText
+  end
+  object Timer: TTimer
+    Enabled = False
+    Interval = 5000
+    OnTimer = TimerTimer
+    left = 24
+    top = 37
+  end
+end

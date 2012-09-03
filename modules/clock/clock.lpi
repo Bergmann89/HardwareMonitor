@@ -31,7 +31,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <HostApplicationFilename Value="G:\Eigene Datein\Delphi Projekte\_Active Projekte\HardwareDisplay\Programm\HardwareMonitor.exe"/>
+        <HostApplicationFilename Value="G:\Eigene Datein\Projekte\_Active Projekte\HardwareMonitor\Programm\HardwareMonitor.exe"/>
         <LaunchingApplication Use="True"/>
       </local>
     </RunParams>
@@ -40,7 +40,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="18">
+    <Units Count="19">
       <Unit0>
         <Filename Value="clock.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -49,7 +49,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="43"/>
         <CursorPos X="24" Y="54"/>
-        <UsageCount Value="75"/>
+        <UsageCount Value="76"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -119,8 +119,8 @@
         <UnitName Value="uHardwareMonitor"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="44"/>
-        <CursorPos X="14" Y="53"/>
+        <TopLine Value="826"/>
+        <CursorPos X="29" Y="8"/>
         <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit9>
@@ -153,9 +153,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="216"/>
-        <CursorPos X="1" Y="226"/>
-        <UsageCount Value="38"/>
+        <TopLine Value="200"/>
+        <CursorPos X="70" Y="216"/>
+        <UsageCount Value="39"/>
         <Loaded Value="True"/>
       </Unit13>
       <Unit14>
@@ -164,9 +164,9 @@
         <UnitName Value="uModulAPI"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="41"/>
-        <CursorPos X="17" Y="55"/>
-        <UsageCount Value="38"/>
+        <TopLine Value="184"/>
+        <CursorPos X="1" Y="202"/>
+        <UsageCount Value="39"/>
         <Loaded Value="True"/>
       </Unit14>
       <Unit15>
@@ -189,137 +189,144 @@
         <UnitName Value="uUSBDisplay"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="206"/>
+        <TopLine Value="190"/>
         <CursorPos X="12" Y="113"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit17>
+      <Unit18>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.1\source\rtl\win\wininc\func.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="661"/>
+        <CursorPos X="10" Y="679"/>
+        <UsageCount Value="10"/>
+      </Unit18>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="uClock.pas"/>
-        <Caret Line="221" Column="1" TopLine="195"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="201" Column="1" TopLine="186"/>
       </Position1>
       <Position2>
-        <Filename Value="uClock.pas"/>
-        <Caret Line="47" Column="30" TopLine="26"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="202" Column="1" TopLine="186"/>
       </Position2>
       <Position3>
-        <Filename Value="uClock.pas"/>
-        <Caret Line="223" Column="25" TopLine="215"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="213" Column="1" TopLine="186"/>
       </Position3>
       <Position4>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="102" Column="16" TopLine="83"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="214" Column="1" TopLine="192"/>
       </Position4>
       <Position5>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="106" Column="44" TopLine="83"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="230" Column="1" TopLine="191"/>
       </Position5>
       <Position6>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="96" Column="43" TopLine="83"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="202" Column="1" TopLine="191"/>
       </Position6>
       <Position7>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="116" Column="43" TopLine="87"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="207" Column="1" TopLine="191"/>
       </Position7>
       <Position8>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="97" Column="1" TopLine="88"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="230" Column="1" TopLine="212"/>
       </Position8>
       <Position9>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="107" Column="20" TopLine="88"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="202" Column="1" TopLine="184"/>
       </Position9>
       <Position10>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="108" Column="1" TopLine="88"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="207" Column="1" TopLine="184"/>
       </Position10>
       <Position11>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="109" Column="1" TopLine="88"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="230" Column="1" TopLine="212"/>
       </Position11>
       <Position12>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="131" Column="55" TopLine="97"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="202" Column="1" TopLine="184"/>
       </Position12>
       <Position13>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="108" Column="1" TopLine="97"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="217" Column="1" TopLine="188"/>
       </Position13>
       <Position14>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="98" Column="1" TopLine="92"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="218" Column="1" TopLine="189"/>
       </Position14>
       <Position15>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="103" Column="1" TopLine="92"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="230" Column="1" TopLine="212"/>
       </Position15>
       <Position16>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="116" Column="39" TopLine="101"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="202" Column="1" TopLine="184"/>
       </Position16>
       <Position17>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="117" Column="1" TopLine="101"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="221" Column="1" TopLine="203"/>
       </Position17>
       <Position18>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="99" Column="1" TopLine="84"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="222" Column="1" TopLine="203"/>
       </Position18>
       <Position19>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="117" Column="1" TopLine="102"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="212" Column="33" TopLine="200"/>
       </Position19>
       <Position20>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="104" Column="1" TopLine="98"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="224" Column="1" TopLine="200"/>
       </Position20>
       <Position21>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="117" Column="1" TopLine="98"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="230" Column="1" TopLine="201"/>
       </Position21>
       <Position22>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="104" Column="1" TopLine="98"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="232" Column="1" TopLine="203"/>
       </Position22>
       <Position23>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="117" Column="1" TopLine="98"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="212" Column="17" TopLine="194"/>
       </Position23>
       <Position24>
-        <Filename Value="..\..\uUSBDisplay.pas"/>
-        <Caret Line="109" Column="1" TopLine="98"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="207" Column="1" TopLine="200"/>
       </Position24>
       <Position25>
-        <Filename Value="uClock.pas"/>
-        <Caret Line="41" Column="30" TopLine="26"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="200" Column="1" TopLine="193"/>
       </Position25>
       <Position26>
-        <Filename Value="uClock.pas"/>
-        <Caret Line="65" Column="33" TopLine="40"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="201" Column="1" TopLine="193"/>
       </Position26>
       <Position27>
-        <Filename Value="uClock.pas"/>
-        <Caret Line="165" Column="8" TopLine="142"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="202" Column="1" TopLine="193"/>
       </Position27>
       <Position28>
-        <Filename Value="uClock.pas"/>
-        <Caret Line="45" Column="18" TopLine="29"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="212" Column="44" TopLine="193"/>
       </Position28>
       <Position29>
-        <Filename Value="uClock.pas"/>
-        <Caret Line="144" Column="24" TopLine="129"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="237" Column="1" TopLine="219"/>
       </Position29>
       <Position30>
-        <Filename Value="clock.lpr"/>
-        <Caret Line="103" Column="42" TopLine="35"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="202" Column="1" TopLine="184"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="9"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
       <Filename Value="..\clock"/>
@@ -351,15 +358,30 @@
   <Debugging>
     <BreakPoints Count="1">
       <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsGlobal"/>
+        <WatchKind Value="wpkWrite"/>
         <Source Value="..\..\uModulAPI.pas"/>
         <Line Value="155"/>
       </Item1>
     </BreakPoints>
-    <Watches Count="1">
+    <Watches Count="5">
       <Item1>
         <Expression Value="fBgColor"/>
         <DisplayStyle Value="wdfHex"/>
       </Item1>
+      <Item2>
+        <Expression Value="p^.DataType"/>
+      </Item2>
+      <Item3>
+        <Expression Value="s"/>
+      </Item3>
+      <Item4>
+        <Expression Value="PChar(fSettingsArr[0].Data)"/>
+      </Item4>
+      <Item5>
+        <Expression Value="PChar(p^.Data)"/>
+      </Item5>
     </Watches>
     <Exceptions Count="3">
       <Item1>
@@ -373,4 +395,5 @@
       </Item3>
     </Exceptions>
   </Debugging>
+  <EditorMacros Count="0"/>
 </CONFIG>

@@ -1,5 +1,5 @@
 UpdateRate = 1000;
-ModulCount = 4;
+ModulCount = 5;
 Background = 'G:\Eigene Datein\Projekte\_Active Projekte\HardwareMonitor\Programm\save.bmp';
 DisplayInfo:
   Width = 480;
@@ -12,7 +12,7 @@ DisplayInfo:
 end;
 Modules:
   0:
-    Name = 'Clock 1.0.0';
+    Name = Clock;
     LibName = 'clock.dll';
     LibVersion = '1.0.0';
     Position:
@@ -20,24 +20,24 @@ Modules:
       y = 4;
     end;
     SmallSize:
-      x = 200;
+      x = 181;
       y = 80;
     end;
     Modul:
       Datumsformat = 'ddd dd. mmm yyyy';
-      GrÃ¶ÃŸe_der_Sec__Anzeige = '0.75';
-      GrÃ¶ÃŸe_der_Datum_Anzeige = '0.400000005960465';
+      Größe_der_Sec__Anzeige = '0.75';
+      Größe_der_Datum_Anzeige = '0.100000001490116';
       Hintergrundfarbe = 1610612736;
       Font:
-        Name = ððððððððððððï¾­Þï¾­ÞaÀðC|ðC¥Æ0;
-        Color = 4294967295;
+        Name = 'Arial';
+        Color = 4278190079;
         Size = 0;
         Style = 0;
       end;
     end;
   end;
   1:
-    Name = 'CPU Load 1.0.0';
+    Name = 'CPU Load';
     LibName = 'cpu_load.dll';
     LibVersion = '1.0.0';
     Position:
@@ -45,7 +45,7 @@ Modules:
       y = 88;
     end;
     SmallSize:
-      x = 200;
+      x = 180;
       y = 180;
     end;
     Modul:
@@ -55,7 +55,7 @@ Modules:
       Diagramm_autom__anpassen = 0;
       Datenabstand = -1379995901;
       Font:
-        Name = ððððððï¾­Þ­ºð­ºð­ºaÀcØû/;
+        Name = 'Arial';
         Color = 4278190079;
         Size = 12;
         Style = 1;
@@ -63,23 +63,27 @@ Modules:
     end;
   end;
   2:
-    Name = 'Netzwerk Download 1.0.0';
+    Name = 'Netzwerk Download';
     LibName = 'download.dll';
     LibVersion = '1.0.0';
     Position:
-      x = 208;
-      y = 4;
+      x = 188;
+      y = 208;
     end;
     SmallSize:
-      x = 268;
-      y = 65;
+      x = 288;
+      y = 60;
     end;
     Modul:
       Farbe = 4278190079;
       Hintergrundfarbe = 1610612736;
       Liniendiagramm = 1;
+      Graphen_zeichnen = 1;
+      Größe_2__Zeile = '0.699999988079071';
+      Zeile_1 = Download;
+      Zeile_2 = %d1%nl%d2;
       Font:
-        Name = ððððððï¾­Þ­ºð­ºð­ºaÀ{èü/;
+        Name = 'Arial';
         Color = 4278190079;
         Size = 12;
         Style = 1;
@@ -87,23 +91,59 @@ Modules:
     end;
   end;
   3:
-    Name = 'Netzwerk Upload 1.0.0';
+    Name = 'Netzwerk Upload';
     LibName = 'upload.dll';
     LibVersion = '1.0.0';
     Position:
-      x = 208;
-      y = 73;
+      x = 188;
+      y = 145;
     end;
     SmallSize:
-      x = 268;
-      y = 65;
+      x = 288;
+      y = 60;
     end;
     Modul:
       Farbe = 4278190079;
       Hintergrundfarbe = 1610612736;
       Liniendiagramm = 1;
+      Graphen_zeichnen = 1;
+      Größe_2__Zeile = '0.699999988079071';
+      Zeile_1 = Upload;
+      Zeile_2 = %d1%nl%d2;
       Font:
-        Name = ððððððï¾­Þ­ºð­ºð­ºaÀŸÜüC+N¥Æ0;
+        Name = 'Arial';
+        Color = 4278190079;
+        Size = 12;
+        Style = 1;
+      end;
+    end;
+  end;
+  4:
+    Name = 'Sensor CPU Temp';
+    LibName = 'sensor.dll';
+    LibVersion = '1.0.0';
+    Position:
+      x = 188;
+      y = 4;
+    end;
+    SmallSize:
+      x = 158;
+      y = 44;
+    end;
+    Modul:
+      Farbe = 1174405120;
+      Hintergrundfarbe = 1610612736;
+      Liniendiagramm = 0;
+      Graphen_zeichnen = 1;
+      Größe_2__Zeile = '0.699999988079071';
+      Zeile_1 = 'CPU Temp %3';
+      Zeile_2 = 'min: %4; max %5';
+      Sensor = /amdcpu/0/temperature/0;
+      max__Wert = 60;
+      min__Wert = 0;
+      Alarmfarbe = 4278124544;
+      Font:
+        Name = 'Arial';
         Color = 4278190079;
         Size = 12;
         Style = 1;

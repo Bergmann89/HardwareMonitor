@@ -123,6 +123,7 @@ type
     procedure BuildModulSettingsTree(aModul: THardwareMonitorModul);
     procedure LoadDisplayInfo(const ID: Integer);
     procedure HardwareMonitorUpdate(aSender: TObject);
+    procedure StartOpenHardwareMonitor;
   public
     { public declarations }
   end; 
@@ -135,7 +136,8 @@ implementation
 {$R *.lfm}
 
 uses
-  uUSBD480_API, LCLIntf, LCLType, uUtils, FileCtrl, uColorForm;
+  uUSBD480_API, LCLIntf, LCLType, uUtils, FileCtrl, JwaTlHelp32, windows,
+  uSensorForm, uColorForm;
 
 const
   MODUL_CURSER: array[0..9] of Integer = (crDefault, crSizeNWSE, crSizeNS, crSizeNESW,
@@ -348,6 +350,7 @@ begin
         Add(fActiveMonitor.Modules[i].Name);
       EndUpdate;
     end;
+  SetActiveModul(-1);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -512,6 +515,7 @@ begin
     else if d^.i.DataType = dtFont then
       CreateFontNode(n1);
   end;
+  SettingsVST.Expanded[fModulNode] := True;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -538,11 +542,72 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TMainForm.StartOpenHardwareMonitor;
+
+  function PrepareFilename(const aFilename: String): String;
+  var
+    list: TStringList;
+    i: Integer;
+  begin
+    list := TStringList.Create;
+    try
+      result := ExtractFilePath(Application.ExeName);
+      list.Text := StringReplace(aFilename, '\', sLineBreak, [rfIgnoreCase, rfReplaceAll]);
+      for i := 0 to list.Count-1 do begin
+        if list[i] = '..' then begin
+          if (Length(result) > 0) and (result[Length(result)] = '\') then
+            Delete(result, Length(result), 1);
+          result := ExtractFilePath(result);
+        end else begin
+          if (Length(result) > 0) and (result[Length(result)] <> '\') then
+            result := result + '\';
+          result := result + list[i];
+        end;
+      end;
+    finally
+      list.Free;
+    end;
+  end;
+
+const
+  OPEN_HARDWARE_MONITOR_PATH = '..\OpenHardwareMonitor\OpenHardwareMonitor.exe';
+var
+  procInfo: TProcessEntry32;
+  h: THandle;
+  procList: TStringList;
+  i: Integer;
+  filename: String;
+begin
+  procList := TStringList.Create;
+  try
+    h := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    procInfo.dwSize := SizeOf(procInfo);
+    if Process32First(h, procInfo) then begin
+      procList.Add(procInfo.szExeFile);
+      while Process32Next(h, procInfo) do
+        procList.Add(procInfo.szExeFile);
+    end;
+
+    filename := LowerCase(ExtractFileName(OPEN_HARDWARE_MONITOR_PATH));
+    for i := 0 to procList.Count-1 do
+      if (LowerCase(procList[i]) = filename) then
+        exit;
+
+    filename := PrepareFilename(OPEN_HARDWARE_MONITOR_PATH);
+    ShellExecute(Handle, 'open', PAnsiChar(filename), '', PAnsiChar(ExtractFilePath(filename)), SW_HIDE);
+  finally
+    procList.Free;
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.FormCreate(Sender: TObject);
 var
   n: PVirtualNode;
   d: PSettingsItemEx;
 begin
+  StartOpenHardwareMonitor;
+
   fFormatSettings.DecimalSeparator := '.';
   SettingsVST.EditDelay := 100;
   SettingsVST.NodeDataSize := SizeOf(TSettingsItemEx);
@@ -594,15 +659,13 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.Button1Click(Sender: TObject);
 begin
-  ColorForm.ShowModal;
+  SensorForm.ShowModal;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.DelModulBtClick(Sender: TObject);
 begin
   if Assigned(fActiveMonitor) and (ActiveModulesLB.ItemIndex >= 0) then begin
-    if (fActiveModulID = ActiveModulesLB.ItemIndex) then
-      SetActiveModul(-1);
     fActiveMonitor.DelModul(ActiveModulesLB.ItemIndex);
     UpdateActiveModulesLB;
   end;
@@ -685,7 +748,7 @@ procedure TMainForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftSta
 
   function Move(const p: TPoint; const x, y: Integer): TPoint;
   begin
-    result := Point(p.X + x, p.Y + y);
+    result := Classes.Point(p.X + x, p.Y + y);
     Key := 0;
   end;
 
@@ -754,7 +817,7 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.PreviewPBMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-  fMouseDownPos := Point(X, Y);
+  fMouseDownPos := Classes.Point(X, Y);
   if Assigned(fActiveModul) then begin
     fMouseDown := IsOnModul(fActiveModul, X, Y);
     fOldModulPos  := fActiveModul.Position;
@@ -959,6 +1022,13 @@ begin
               d^.Event(self);
           end;
         end;
+        dtIdentStr: begin
+          if SensorForm.ShowModal = mrOK then begin
+            Pstring(d^.i.Data)^ := SensorForm.IdentStr;
+            if Assigned(d^.Event) then
+              d^.Event(self);
+          end;
+        end;
         dtColor: begin
           if (ColorForm.ShowModalColor(PCardinal(d^.i.Data)^) = mrOK) then begin
             PCardinal(d^.i.Data)^ := ColorForm.Color.c;
@@ -967,7 +1037,7 @@ begin
           end;
         end;
         dtBool: begin
-          PBoolean(d^.i.Data)^ := not PBoolean(d^.i.Data)^;
+          System.PBoolean(d^.i.Data)^ := not System.PBoolean(d^.i.Data)^;
           if Assigned(d^.Event) then
             d^.Event(self);
         end
@@ -1046,7 +1116,7 @@ begin
             else
               CellText := '[leer]';
           dtBool:
-            if Assigned(d^.i.Data) and PBoolean(d^.i.Data)^ then
+            if Assigned(d^.i.Data) and System.PBoolean(d^.i.Data)^ then
               CellText := 'true'
             else
               CellText := 'false';
@@ -1124,9 +1194,6 @@ begin
         PString(d^.i.Data)^ := NewText;
         if Assigned(d^.Event) then
           d^.Event(self);
-      end;
-      dtIdentStr: begin
-        {$MESSAGE WARNING 'TODO: OpenHardwareBrowser'}
       end;
     end;
 

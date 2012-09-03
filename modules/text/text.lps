@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="5">
+      <Unit0>
+        <Filename Value="text.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="text"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="9"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="uText.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uText"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="100"/>
+        <CursorPos X="24" Y="108"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\background\uBackground.pas"/>
+        <UnitName Value="uBackground"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="22"/>
+        <UsageCount Value="10"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <UnitName Value="uModulAPI"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="36"/>
+        <CursorPos X="15" Y="54"/>
+        <UsageCount Value="10"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\..\gdiplus\GDIPAPI.pas"/>
+        <UnitName Value="GDIPAPI"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="624"/>
+        <CursorPos X="5" Y="642"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit4>
+    </Units>
+    <General>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <JumpHistory Count="24" HistoryIndex="23">
+      <Position1>
+        <Filename Value="uText.pas"/>
+        <Caret Line="25" Column="16" TopLine="1"/>
+      </Position1>
+      <Position2>
+        <Filename Value="uText.pas"/>
+        <Caret Line="83" Column="1" TopLine="55"/>
+      </Position2>
+      <Position3>
+        <Filename Value="uText.pas"/>
+        <Caret Line="31" Column="14" TopLine="13"/>
+      </Position3>
+      <Position4>
+        <Filename Value="uText.pas"/>
+        <Caret Line="32" Column="84" TopLine="13"/>
+      </Position4>
+      <Position5>
+        <Filename Value="uText.pas"/>
+        <Caret Line="42" Column="11" TopLine="16"/>
+      </Position5>
+      <Position6>
+        <Filename Value="uText.pas"/>
+        <Caret Line="115" Column="14" TopLine="88"/>
+      </Position6>
+      <Position7>
+        <Filename Value="uText.pas"/>
+        <Caret Line="112" Column="35" TopLine="91"/>
+      </Position7>
+      <Position8>
+        <Filename Value="uText.pas"/>
+        <Caret Line="86" Column="38" TopLine="68"/>
+      </Position8>
+      <Position9>
+        <Filename Value="uText.pas"/>
+        <Caret Line="66" Column="1" TopLine="52"/>
+      </Position9>
+      <Position10>
+        <Filename Value="uText.pas"/>
+        <Caret Line="28" Column="15" TopLine="10"/>
+      </Position10>
+      <Position11>
+        <Filename Value="uText.pas"/>
+        <Caret Line="84" Column="71" TopLine="57"/>
+      </Position11>
+      <Position12>
+        <Filename Value="uText.pas"/>
+        <Caret Line="81" Column="1" TopLine="55"/>
+      </Position12>
+      <Position13>
+        <Filename Value="uText.pas"/>
+        <Caret Line="82" Column="1" TopLine="55"/>
+      </Position13>
+      <Position14>
+        <Filename Value="uText.pas"/>
+        <Caret Line="53" Column="1" TopLine="31"/>
+      </Position14>
+      <Position15>
+        <Filename Value="uText.pas"/>
+        <Caret Line="54" Column="1" TopLine="31"/>
+      </Position15>
+      <Position16>
+        <Filename Value="uText.pas"/>
+        <Caret Line="55" Column="1" TopLine="31"/>
+      </Position16>
+      <Position17>
+        <Filename Value="uText.pas"/>
+        <Caret Line="56" Column="1" TopLine="31"/>
+      </Position17>
+      <Position18>
+        <Filename Value="uText.pas"/>
+        <Caret Line="57" Column="1" TopLine="31"/>
+      </Position18>
+      <Position19>
+        <Filename Value="uText.pas"/>
+        <Caret Line="58" Column="1" TopLine="31"/>
+      </Position19>
+      <Position20>
+        <Filename Value="uText.pas"/>
+        <Caret Line="59" Column="1" TopLine="31"/>
+      </Position20>
+      <Position21>
+        <Filename Value="uText.pas"/>
+        <Caret Line="60" Column="1" TopLine="31"/>
+      </Position21>
+      <Position22>
+        <Filename Value="uText.pas"/>
+        <Caret Line="45" Column="1" TopLine="32"/>
+      </Position22>
+      <Position23>
+        <Filename Value="uText.pas"/>
+        <Caret Line="46" Column="1" TopLine="32"/>
+      </Position23>
+      <Position24>
+        <Filename Value="uText.pas"/>
+        <Caret Line="144" Column="45" TopLine="121"/>
+      </Position24>
+    </JumpHistory>
+  </ProjectSession>
+  <EditorMacros Count="0"/>
+</CONFIG>
