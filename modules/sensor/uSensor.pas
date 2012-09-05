@@ -13,10 +13,10 @@ type
 
   TSensor = class(TwmiGraphModul)
   private
-    fSettingsBaseID: Integer;
     fMaxValue: Single;
     fMinValue: Single;
     fWarningColor: Cardinal;
+    fSensorIdent: String;
     function PrepareLine(aFormat: String): String;
   protected
     function GetData: Single; override;
@@ -24,8 +24,7 @@ type
     function GetSmallDisplayString: String; override;
     function GetFontColor: Cardinal; override;
   public
-    procedure GetSettings(out aCount: Integer; out aData: PSettingsItem); override;
-    procedure SetSettings(const aData: PSettingsItem); override;
+    procedure SetSettings(const aData: PSettingsItemRec); override;
 
     constructor Create;
   end;
@@ -201,28 +200,17 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TSensor.GetSettings(out aCount: Integer; out aData: PSettingsItem);
-var
-  p: PChar;
-begin
-  inherited GetSettings(aCount, aData);
-  fSettingsArr[fSettingsBaseID].Data := nil;
-  if Assigned(fUpdateThread) then
-    with PSensorData((fUpdateThread as TSensorWmiThread).Data)^ do begin
-      if Ident <> '' then
-        fSettingsArr[fSettingsBaseID].Data := PAnsiChar(Ident);
-    end;
-end;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TSensor.SetSettings(const aData: PSettingsItem);
+procedure TSensor.SetSettings(const aData: PSettingsItemRec);
 begin
   inherited SetSettings(aData);
   if not Assigned(fUpdateThread) then
     exit;
   with PSensorData((fUpdateThread as TSensorWmiThread).Data)^ do begin
-    ClearData;
-    UpdateAll := true;
+    if fSensorIdent <> Ident then begin
+      Ident := fSensorIdent;
+      ClearData;
+      UpdateAll := true;
+    end;
   end;
 end;
 
@@ -236,32 +224,19 @@ begin
   //5 = max
   fFirstLineFormat := '%1 - %2: %3';
   fSecondLineFormat := 'min: %4; max %5';
-  inherited Create(TSensorWmiThread);
-  fSettingsBaseID := Length(fSettingsArr);
-  SetLength(fSettingsArr, fSettingsBaseID+4);
-  fMinValue := 0;
-  fMaxValue := 0;
   fWarningColor := $FEFF0000;
-  with fSettingsArr[fSettingsBaseID] do begin
-    Name     := 'Sensor';
-    DataType := dtIdentStr;
-    Data     := @PSensorData((fUpdateThread as TSensorWmiThread).Data)^.Ident;
-  end;
-  with fSettingsArr[fSettingsBaseID+1] do begin
-    Name     := 'max. Wert';
-    DataType := dtFloat32;
-    Data     := @fMaxValue;
-  end;
-  with fSettingsArr[fSettingsBaseID+2] do begin
-    Name     := 'min. Wert';
-    DataType := dtFloat32;
-    Data     := @fMinValue;
-  end;
-  with fSettingsArr[fSettingsBaseID+3] do begin
-    Name     := 'Alarmfarbe';
-    DataType := dtColor;
-    Data     := @fWarningColor;
-  end;
+  inherited Create(TSensorWmiThread);
+
+  fSettingItems.Add(CreateSettingsItem(
+    'sensor', 'Sensordaten', SETTINGS_FLAG_NONE, dtUnknown, nil));
+  fSettingItems.Add(CreateSettingsItem(
+    'sensor/ident', 'Sensorident.', SETTINGS_FLAG_IDENT_STR, dtString, @fSensorIdent));
+  fSettingItems.Add(CreateSettingsItem(
+    'sensor/max_value', 'max. Wert', SETTINGS_FLAG_NONE, dtFloat32, @fMaxValue));
+  fSettingItems.Add(CreateSettingsItem(
+    'sensor/min_value', 'min. Wert', SETTINGS_FLAG_NONE, dtFloat32, @fMinValue));
+  fSettingItems.Add(CreateSettingsItem(
+    'sensor/alarm_color', 'Alarmfarbe', SETTINGS_FLAG_COLOR, dtInt32, @fWarningColor));
 end;
 
 end.

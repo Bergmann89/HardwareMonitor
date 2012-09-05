@@ -5,7 +5,8 @@ unit uBackground;
 interface
 
 uses
-  Classes, SysUtils, uModulAPI, windows, uUSBDisplay;
+  Classes, SysUtils, uModulAPI, windows, uUSBDisplay,
+  GDIPAPI, GDIPOBJ, GDIPUTIL;
 
 type
 
@@ -13,17 +14,17 @@ type
 
   TBackground = class(TBasicModul)
   private
+    fSize: TPoint;
     fHandle: HDC;
     fBitmap: HBITMAP;
     fBgColor: Cardinal;
 
+    fGraphic: TGPGraphics;
+
     procedure CreateBitmapHandle;
   public
     procedure Resize(const aSmall: Boolean; const aSmallW, aSmallH, aLargeW, aLargeH: Integer); override;
-    procedure Update; override;
     function Draw: TDrawResult; override;
-    procedure SetSettings(const aData: PSettingsItem); override;
-    function SendTouchReport(const aPoint: TPoint; const aPressure: Byte; const aMode: TTouchMode): Boolean; override;
 
     constructor Create;
     destructor Destroy; override;
@@ -36,20 +37,18 @@ implementation
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TBackground.CreateBitmapHandle;
 begin
-  fBitmap := CreateBitmap(1, 1, 1, 32, @fBgColor);
+  fBitmap := CreateBitmap(fSize.x, fSize.y, 1, 32, nil);
   SelectObject(fHandle, fBitmap);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TBackground.Resize(const aSmall: Boolean; const aSmallW, aSmallH, aLargeW, aLargeH: Integer);
 begin
-
-end;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TBackground.Update;
-begin
-
+  if Assigned(fGraphic) then
+    FreeAndNil(fGraphic);
+  fSize := Classes.Point(aSmallW, aSmallH);
+  CreateBitmapHandle;
+  fGraphic := TGPGraphics.Create(fHandle);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,19 +60,7 @@ begin
     Height      := 1;
     Transparent := true;
   end;
-end;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TBackground.SetSettings(const aData: PSettingsItem);
-begin
-  inherited SetSettings(aData);
-  CreateBitmapHandle;
-end;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function TBackground.SendTouchReport(const aPoint: TPoint; const aPressure: Byte; const aMode: TTouchMode): Boolean;
-begin
-  Result := inherited SendTouchReport(aPoint, aPressure, aMode);
+  fGraphic.Clear(fBgColor);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,12 +69,19 @@ begin
   inherited Create;
   fHandle := CreateCompatibleDC(GetDC(0));
   fBgColor := $60000000;
+  fSize := Classes.Point(1, 1);
   CreateBitmapHandle;
+
+  fGraphic := TGPGraphics.Create(fHandle);
+
+  fSettingItems.Add(CreateSettingsItem(
+    'background_color', 'Hintergrundfarbe', SETTINGS_FLAG_COLOR, dtInt32, @fBgColor));
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 destructor TBackground.Destroy;
 begin
+  FreeAndNil(fGraphic);
   DeleteObject(fBitmap);
   DeleteDC(fHandle);
   inherited Destroy;

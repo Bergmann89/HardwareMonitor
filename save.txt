@@ -1,5 +1,5 @@
 UpdateRate = 1000;
-ModulCount = 5;
+ModulCount = 17;
 Background = 'G:\Eigene Datein\Projekte\_Active Projekte\HardwareMonitor\Programm\save.bmp';
 DisplayInfo:
   Width = 480;
@@ -15,24 +15,22 @@ Modules:
     Name = Clock;
     LibName = 'clock.dll';
     LibVersion = '1.0.0';
-    Position:
-      x = 4;
-      y = 4;
-    end;
-    SmallSize:
-      x = 181;
-      y = 80;
-    end;
-    Modul:
-      Datumsformat = 'ddd dd. mmm yyyy';
-      Größe_der_Sec__Anzeige = '0.75';
-      Größe_der_Datum_Anzeige = '0.100000001490116';
-      Hintergrundfarbe = 1610612736;
-      Font:
-        Name = 'Arial';
-        Color = 4278190079;
-        Size = 0;
-        Style = 0;
+    ModulSettings:
+      date_format = 'ddd dd. mmm yyyy';
+      sec_size = '0.75';
+      dat_size = '0.400000005960465';
+      background_color = 1610612736;
+      font/name = Arial;
+      font/size = 0;
+      font/style = 0;
+      font/color = -1;
+      Position:
+        x = 4;
+        y = 4;
+      end;
+      SmallSize:
+        x = 200;
+        y = 80;
       end;
     end;
   end;
@@ -40,25 +38,23 @@ Modules:
     Name = 'CPU Load';
     LibName = 'cpu_load.dll';
     LibVersion = '1.0.0';
-    Position:
-      x = 4;
-      y = 88;
-    end;
-    SmallSize:
-      x = 180;
-      y = 180;
-    end;
-    Modul:
-      Farbe = 4278190079;
-      Prim__Hintergrundfarbe = 1610612736;
-      Sek__Hintergrundfarbe = 1627389951;
-      Diagramm_autom__anpassen = 0;
-      Datenabstand = -1379995901;
-      Font:
-        Name = 'Arial';
-        Color = 4278190079;
-        Size = 12;
-        Style = 1;
+    ModulSettings:
+      color = -16777217;
+      prim_bg_color = 1610612736;
+      sec_bg_color = 1627389951;
+      font/name = Arial;
+      font/size = 12;
+      font/style = 1;
+      font/color = -16777217;
+      auto_strech = 0;
+      data_dist = 3;
+      Position:
+        x = 4;
+        y = 88;
+      end;
+      SmallSize:
+        x = 200;
+        y = 180;
       end;
     end;
   end;
@@ -66,27 +62,25 @@ Modules:
     Name = 'Netzwerk Download';
     LibName = 'download.dll';
     LibVersion = '1.0.0';
-    Position:
-      x = 188;
-      y = 208;
-    end;
-    SmallSize:
-      x = 288;
-      y = 60;
-    end;
-    Modul:
-      Farbe = 4278190079;
-      Hintergrundfarbe = 1610612736;
-      Liniendiagramm = 1;
-      Graphen_zeichnen = 1;
-      Größe_2__Zeile = '0.699999988079071';
-      Zeile_1 = Download;
-      Zeile_2 = %d1%nl%d2;
-      Font:
-        Name = 'Arial';
-        Color = 4278190079;
-        Size = 12;
-        Style = 1;
+    ModulSettings:
+      color = -2130706433;
+      background_color = 1610612736;
+      linechart = 0;
+      drawchart = 1;
+      font/name = Arial;
+      font/size = 12;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = 'Download %d2';
+      line2_format = %d1;
+      Position:
+        x = 208;
+        y = 208;
+      end;
+      SmallSize:
+        x = 268;
+        y = 60;
       end;
     end;
   end;
@@ -94,59 +88,378 @@ Modules:
     Name = 'Netzwerk Upload';
     LibName = 'upload.dll';
     LibVersion = '1.0.0';
-    Position:
-      x = 188;
-      y = 145;
-    end;
-    SmallSize:
-      x = 288;
-      y = 60;
-    end;
-    Modul:
-      Farbe = 4278190079;
-      Hintergrundfarbe = 1610612736;
-      Liniendiagramm = 1;
-      Graphen_zeichnen = 1;
-      Größe_2__Zeile = '0.699999988079071';
-      Zeile_1 = Upload;
-      Zeile_2 = %d1%nl%d2;
-      Font:
-        Name = 'Arial';
-        Color = 4278190079;
-        Size = 12;
-        Style = 1;
+    ModulSettings:
+      color = -2130706433;
+      background_color = 1610612736;
+      linechart = 0;
+      drawchart = 1;
+      font/name = Arial;
+      font/size = 12;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = 'Upload %d2';
+      line2_format = %d1;
+      Position:
+        x = 208;
+        y = 144;
+      end;
+      SmallSize:
+        x = 268;
+        y = 60;
       end;
     end;
   end;
   4:
-    Name = 'Sensor CPU Temp';
+    Name = 'Temp Background';
+    LibName = 'background.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      background_color = 1610612736;
+      Position:
+        x = 208;
+        y = 4;
+      end;
+      SmallSize:
+        x = 150;
+        y = 91;
+      end;
+    end;
+  end;
+  5:
+    Name = 'Temp. D:';
     LibName = 'sensor.dll';
     LibVersion = '1.0.0';
-    Position:
-      x = 188;
-      y = 4;
+    ModulSettings:
+      color = -16777217;
+      background_color = 0;
+      linechart = 1;
+      drawchart = 0;
+      font/name = Arial;
+      font/size = 10;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = 'Festplatte D: %3';
+      line2_format = ;
+      sensor/ident = /hdd/0/temperature/0;
+      sensor/max_value = 0;
+      sensor/min_value = 50;
+      sensor/alarm_color = -16842752;
+      Position:
+        x = 208;
+        y = 4;
+      end;
+      SmallSize:
+        x = 150;
+        y = 23;
+      end;
     end;
-    SmallSize:
-      x = 158;
-      y = 44;
+  end;
+  6:
+    Name = 'Temp. E:';
+    LibName = 'sensor.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      color = -16777217;
+      background_color = 0;
+      linechart = 1;
+      drawchart = 0;
+      font/name = Arial;
+      font/size = 10;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = 'Festplatte E: %3';
+      line2_format = ;
+      sensor/ident = /hdd/2/temperature/0;
+      sensor/max_value = 50;
+      sensor/min_value = 0;
+      sensor/alarm_color = -16842752;
+      Position:
+        x = 208;
+        y = 21;
+      end;
+      SmallSize:
+        x = 150;
+        y = 23;
+      end;
     end;
-    Modul:
-      Farbe = 1174405120;
-      Hintergrundfarbe = 1610612736;
-      Liniendiagramm = 0;
-      Graphen_zeichnen = 1;
-      Größe_2__Zeile = '0.699999988079071';
-      Zeile_1 = 'CPU Temp %3';
-      Zeile_2 = 'min: %4; max %5';
-      Sensor = /amdcpu/0/temperature/0;
-      max__Wert = 60;
-      min__Wert = 0;
-      Alarmfarbe = 4278124544;
-      Font:
-        Name = 'Arial';
-        Color = 4278190079;
-        Size = 12;
-        Style = 1;
+  end;
+  7:
+    Name = 'Temp. F:';
+    LibName = 'sensor.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      color = -16777217;
+      background_color = 0;
+      linechart = 1;
+      drawchart = 0;
+      font/name = Arial;
+      font/size = 10;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = 'Festplatte F: %3';
+      line2_format = ;
+      sensor/ident = /hdd/1/temperature/0;
+      sensor/max_value = 50;
+      sensor/min_value = 0;
+      sensor/alarm_color = -16842752;
+      Position:
+        x = 208;
+        y = 38;
+      end;
+      SmallSize:
+        x = 150;
+        y = 23;
+      end;
+    end;
+  end;
+  8:
+    Name = 'Temp. G:';
+    LibName = 'sensor.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      color = -16777217;
+      background_color = 0;
+      linechart = 1;
+      drawchart = 0;
+      font/name = Arial;
+      font/size = 10;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = 'Festplatte G: %3';
+      line2_format = ;
+      sensor/ident = /hdd/3/temperature/0;
+      sensor/max_value = 50;
+      sensor/min_value = 0;
+      sensor/alarm_color = -16842752;
+      Position:
+        x = 208;
+        y = 55;
+      end;
+      SmallSize:
+        x = 150;
+        y = 23;
+      end;
+    end;
+  end;
+  9:
+    Name = 'Temp. H:';
+    LibName = 'sensor.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      color = -16777217;
+      background_color = 0;
+      linechart = 1;
+      drawchart = 0;
+      font/name = Arial;
+      font/size = 10;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = 'Festplatte H: %3';
+      line2_format = ;
+      sensor/ident = /hdd/4/temperature/0;
+      sensor/max_value = 50;
+      sensor/min_value = 0;
+      sensor/alarm_color = -16842752;
+      Position:
+        x = 208;
+        y = 72;
+      end;
+      SmallSize:
+        x = 150;
+        y = 23;
+      end;
+    end;
+  end;
+  10:
+    Name = 'CPU Temp';
+    LibName = 'sensor.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      color = 1694498815;
+      background_color = 1610612736;
+      linechart = 1;
+      drawchart = 1;
+      font/name = Arial;
+      font/size = 12;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = 'CPU Temp %3';
+      line2_format = ;
+      sensor/ident = /amdcpu/0/temperature/0;
+      sensor/max_value = 50;
+      sensor/min_value = 0;
+      sensor/alarm_color = -16842752;
+      Position:
+        x = 208;
+        y = 99;
+      end;
+      SmallSize:
+        x = 268;
+        y = 41;
+      end;
+    end;
+  end;
+  11:
+    Name = 'Graka Temp';
+    LibName = 'sensor.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      color = 1694498815;
+      background_color = 1610612736;
+      linechart = 1;
+      drawchart = 1;
+      font/name = Arial;
+      font/size = 12;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = 'ATI: %3';
+      line2_format = ;
+      sensor/ident = /atigpu/0/temperature/0;
+      sensor/max_value = 80;
+      sensor/min_value = 0;
+      sensor/alarm_color = -16842752;
+      Position:
+        x = 362;
+        y = 69;
+      end;
+      SmallSize:
+        x = 114;
+        y = 26;
+      end;
+    end;
+  end;
+  12:
+    Name = 'FAN Background';
+    LibName = 'background.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      background_color = 1610612736;
+      Position:
+        x = 362;
+        y = 4;
+      end;
+      SmallSize:
+        x = 114;
+        y = 61;
+      end;
+    end;
+  end;
+  13:
+    Name = 'FAN 1';
+    LibName = 'sensor.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      color = -16777217;
+      background_color = 0;
+      linechart = 1;
+      drawchart = 0;
+      font/name = Arial;
+      font/size = 10;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = '#1: %3';
+      line2_format = ;
+      sensor/ident = /lpc/f71889ed/fan/0;
+      sensor/max_value = 0;
+      sensor/min_value = 1000;
+      sensor/alarm_color = -16842752;
+      Position:
+        x = 376;
+        y = 15;
+      end;
+      SmallSize:
+        x = 100;
+        y = 23;
+      end;
+    end;
+  end;
+  14:
+    Name = 'FAN 2';
+    LibName = 'sensor.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      color = -16777217;
+      background_color = 0;
+      linechart = 1;
+      drawchart = 0;
+      font/name = Arial;
+      font/size = 10;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = '#2: %3';
+      line2_format = ;
+      sensor/ident = /lpc/f71889ed/fan/1;
+      sensor/max_value = 0;
+      sensor/min_value = 1000;
+      sensor/alarm_color = -16842752;
+      Position:
+        x = 376;
+        y = 29;
+      end;
+      SmallSize:
+        x = 100;
+        y = 23;
+      end;
+    end;
+  end;
+  15:
+    Name = 'FAN 3';
+    LibName = 'sensor.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      color = -16777217;
+      background_color = 0;
+      linechart = 1;
+      drawchart = 1;
+      font/name = Arial;
+      font/size = 10;
+      font/style = 1;
+      font/color = -16777217;
+      2nd_line_size = '0.699999988079071';
+      line1_format = '#3: %3';
+      line2_format = ;
+      sensor/ident = /lpc/f71889ed/fan/2;
+      sensor/max_value = 0;
+      sensor/min_value = 1000;
+      sensor/alarm_color = -16842752;
+      Position:
+        x = 376;
+        y = 43;
+      end;
+      SmallSize:
+        x = 100;
+        y = 23;
+      end;
+    end;
+  end;
+  16:
+    Name = 'FAN Text';
+    LibName = 'text.dll';
+    LibVersion = '1.0.0';
+    ModulSettings:
+      font/name = Arial;
+      font/size = 12;
+      font/style = 1;
+      font/color = -16777217;
+      background_color = 0;
+      text = 'LÃ¼fter:';
+      Position:
+        x = 362;
+        y = 4;
+      end;
+      SmallSize:
+        x = 60;
+        y = 20;
       end;
     end;
   end;

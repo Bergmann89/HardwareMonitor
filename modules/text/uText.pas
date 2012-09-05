@@ -27,8 +27,7 @@ type
     procedure Resize(const aSmall: Boolean; const aSmallW, aSmallH, aLargeW, aLargeH: Integer); override;
     procedure Update; override;
     function Draw: TDrawResult; override;
-    procedure SetSettings(const aData: PSettingsItem); override;
-    procedure GetSettings(out aCount: Integer; out aData: PSettingsItem); override;
+    procedure SetSettings(const aData: PSettingsItemRec); override;
 
     constructor Create;
     destructor Destroy; override;
@@ -85,21 +84,14 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TText.SetSettings(const aData: PSettingsItem);
+procedure TText.SetSettings(const aData: PSettingsItemRec);
 begin
   inherited SetSettings(aData);
   CreateFont;
-  fText := StringReplace(PAnsiChar(fSettingsArr[2].Data), '%nl', sLineBreak, [rfIgnoreCase, rfReplaceAll]);
+  fText := StringReplace(fText, '%nl', sLineBreak, [rfIgnoreCase, rfReplaceAll]);
 end;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TText.GetSettings(out aCount: Integer; out aData: PSettingsItem);
-begin
-  fSettingsArr[2].Data := PAnsiChar(fText);
-  inherited GetSettings(aCount, aData);
-end;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 constructor TText.Create;
 begin
   inherited Create;
@@ -111,22 +103,11 @@ begin
   fBgColor := $60000000;
   fText := 'Text';
 
-  SetLength(fSettingsArr, 3);
-  with fSettingsArr[0] do begin
-    DataType := dtFont;
-    Name     := 'Font';
-    Data     := @fFontData;
-  end;
-  with fSettingsArr[1] do begin
-    DataType := dtColor;
-    Name     := 'Hintergrund';
-    Data     := @fBgColor;
-  end;
-  with fSettingsArr[2] do begin
-    DataType := dtString;
-    Name     := 'Text';
-    Data     := PAnsiChar(fText);
-  end;
+  CreateFontSettingItems(fSettingItems, 'font', 'Font', @fFontData);
+  fSettingItems.Add(CreateSettingsItem(
+    'background_color', 'Hintergrundfarbe', SETTINGS_FLAG_NONE, dtInt32, @fBgColor));
+  fSettingItems.Add(CreateSettingsItem(
+    'text', 'Text', SETTINGS_FLAG_NONE, dtString, @fText));
 
   fHandle := CreateCompatibleDC(GetDC(0));
   fBitmap := CreateBitmap(1, 1, 1, 32, nil);

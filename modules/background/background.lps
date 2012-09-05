@@ -9,11 +9,10 @@
         <Filename Value="background.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="background"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="99"/>
-        <CursorPos X="61" Y="120"/>
+        <TopLine Value="86"/>
+        <CursorPos X="28" Y="131"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -21,10 +20,11 @@
         <Filename Value="uBackground.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uBackground"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="37"/>
-        <CursorPos X="24" Y="79"/>
+        <TopLine Value="64"/>
+        <CursorPos X="22" Y="96"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -33,8 +33,8 @@
         <UnitName Value="uModulAPI"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="3" Y="16"/>
+        <TopLine Value="313"/>
+        <CursorPos X="1" Y="333"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -42,60 +42,136 @@
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="13" HistoryIndex="12">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="uBackground.pas"/>
-        <Caret Line="15" Column="5" TopLine="1"/>
+        <Caret Line="25" Column="56" TopLine="7"/>
       </Position1>
       <Position2>
         <Filename Value="uBackground.pas"/>
-        <Caret Line="25" Column="24" TopLine="1"/>
+        <Caret Line="67" Column="61" TopLine="62"/>
       </Position2>
       <Position3>
         <Filename Value="uBackground.pas"/>
-        <Caret Line="58" Column="60" TopLine="32"/>
+        <Caret Line="25" Column="15" TopLine="25"/>
       </Position3>
       <Position4>
         <Filename Value="uBackground.pas"/>
-        <Caret Line="20" Column="28" TopLine="1"/>
+        <Caret Line="67" Column="61" TopLine="62"/>
       </Position4>
       <Position5>
-        <Filename Value="uBackground.pas"/>
-        <Caret Line="30" Column="34" TopLine="11"/>
+        <Filename Value="background.lpr"/>
+        <Caret Line="119" Column="33" TopLine="99"/>
       </Position5>
       <Position6>
-        <Filename Value="background.lpr"/>
-        <Caret Line="25" Column="19" TopLine="12"/>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="88" Column="84" TopLine="56"/>
       </Position6>
       <Position7>
         <Filename Value="uBackground.pas"/>
-        <Caret Line="41" Column="34" TopLine="34"/>
+        <Caret Line="69" Column="1" TopLine="62"/>
       </Position7>
       <Position8>
-        <Filename Value="uBackground.pas"/>
-        <Caret Line="8" Column="53" TopLine="1"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="373" Column="1" TopLine="355"/>
       </Position8>
       <Position9>
-        <Filename Value="uBackground.pas"/>
-        <Caret Line="40" Column="50" TopLine="22"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="374" Column="1" TopLine="355"/>
       </Position9>
       <Position10>
-        <Filename Value="uBackground.pas"/>
-        <Caret Line="20" Column="33" TopLine="2"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="375" Column="1" TopLine="355"/>
       </Position10>
       <Position11>
-        <Filename Value="uBackground.pas"/>
-        <Caret Line="40" Column="3" TopLine="35"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="376" Column="1" TopLine="355"/>
       </Position11>
       <Position12>
-        <Filename Value="background.lpr"/>
-        <Caret Line="8" Column="31" TopLine="1"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="390" Column="1" TopLine="361"/>
       </Position12>
       <Position13>
-        <Filename Value="uBackground.pas"/>
-        <Caret Line="57" Column="43" TopLine="55"/>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="392" Column="43" TopLine="362"/>
       </Position13>
+      <Position14>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="69" Column="1" TopLine="62"/>
+      </Position14>
+      <Position15>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="374" Column="1" TopLine="362"/>
+      </Position15>
+      <Position16>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="375" Column="1" TopLine="362"/>
+      </Position16>
+      <Position17>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="376" Column="1" TopLine="362"/>
+      </Position17>
+      <Position18>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="377" Column="1" TopLine="362"/>
+      </Position18>
+      <Position19>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="391" Column="1" TopLine="362"/>
+      </Position19>
+      <Position20>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="396" Column="1" TopLine="367"/>
+      </Position20>
+      <Position21>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="398" Column="1" TopLine="369"/>
+      </Position21>
+      <Position22>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="70" Column="1" TopLine="62"/>
+      </Position22>
+      <Position23>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="39" Column="49" TopLine="21"/>
+      </Position23>
+      <Position24>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="40" Column="1" TopLine="21"/>
+      </Position24>
+      <Position25>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="41" Column="1" TopLine="21"/>
+      </Position25>
+      <Position26>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="58" Column="11" TopLine="44"/>
+      </Position26>
+      <Position27>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="77" Column="3" TopLine="66"/>
+      </Position27>
+      <Position28>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="29" Column="14" TopLine="11"/>
+      </Position28>
+      <Position29>
+        <Filename Value="uBackground.pas"/>
+        <Caret Line="27" Column="1" TopLine="11"/>
+      </Position29>
+      <Position30>
+        <Filename Value="..\..\uModulAPI.pas"/>
+        <Caret Line="79" Column="30" TopLine="61"/>
+      </Position30>
     </JumpHistory>
   </ProjectSession>
+  <Debugging>
+    <Watches Count="1">
+      <Item1>
+        <Expression Value="fBgColor"/>
+        <DisplayStyle Value="wdfHex"/>
+      </Item1>
+    </Watches>
+  </Debugging>
   <EditorMacros Count="0"/>
 </CONFIG>

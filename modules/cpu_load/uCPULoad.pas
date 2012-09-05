@@ -35,7 +35,7 @@ type
     fFontData: TModulFontData;
 
     fStrechData: Boolean;
-    fDataDist: Byte;
+    fDataDist, fDataDistOld: Byte;
     fDataCount: Integer;
     fDataIndex: Integer;
     fDataRect: TGPRectF;
@@ -62,13 +62,12 @@ type
     procedure InitCpuLoadData;
     procedure CreateFonts;
     procedure CreateSettings;
-    procedure FreeSettings;
   public
     procedure Resize(const aSmall: Boolean; const aSmallW, aSmallH, aLargeW, aLargeH: Integer); override;
     procedure Update; override;
     function Draw: TDrawResult; override;
     function SendTouchReport(const aPoint: TPoint; const aPressure: Byte; const aMode: TTouchMode): Boolean; override;
-    procedure SetSettings(const aData: PSettingsItem); override;
+    procedure SetSettings(const aData: PSettingsItemRec); override;
 
     constructor Create;
     destructor Destroy; override;
@@ -233,6 +232,7 @@ begin
       end;
     end;
   end;
+  fDataDistOld := fDataDist;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -252,47 +252,17 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TCPU.CreateSettings;
 begin
-  SetLength(fSettingsArr, 6);
-  FillChar(fSettingsArr[0], SizeOf(TSettingsItem)*Length(fSettingsArr), 0);
-
-  with fSettingsArr[0] do begin
-    Name     := 'Farbe';
-    DataType := dtColor;
-    Data     := @fColor;
-  end;
-  with fSettingsArr[1] do begin
-    Name     := 'Prim. Hintergrundfarbe';
-    DataType := dtColor;
-    Data     := @fBgColor1;
-  end;
-  with fSettingsArr[2] do begin
-    Name     := 'Sek. Hintergrundfarbe';
-    DataType := dtColor;
-    Data     := @fBgColor2;
-  end;
-  with fSettingsArr[3] do begin
-    Name     := 'Font';
-    DataType := dtFont;
-    Data     := @fFontData;
-  end;
-  with fSettingsArr[4] do begin
-    Name     := 'Diagramm autom. anpassen';
-    DataType := dtBool;
-    Data     := @fStrechData;
-  end;
-  with fSettingsArr[5] do begin
-    Name     := 'Datenabstand';
-    DataType := dtByte;
-    Data     := @fDataDist;
-    Min      := 1;
-    Max      := 10;
-  end;
-end;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TCPU.FreeSettings;
-begin
-  SetLength(fSettingsArr, 0);
+  fSettingItems.Add(CreateSettingsItem(
+    'color', 'Farbe', SETTINGS_FLAG_COLOR, dtInt32, @fColor));
+  fSettingItems.Add(CreateSettingsItem(
+    'prim_bg_color', 'Prim. Hintergrundfarbe', SETTINGS_FLAG_COLOR, dtInt32, @fBgColor1));
+  fSettingItems.Add(CreateSettingsItem(
+    'sec_bg_color', 'Sek. Hintergrundfarbe', SETTINGS_FLAG_COLOR, dtInt32, @fBgColor2));
+  CreateFontSettingItems(fSettingItems, 'font', 'Font', @fFontData);
+  fSettingItems.Add(CreateSettingsItem(
+    'auto_strech', 'Diagramm autom. anpassen', SETTINGS_FLAG_NONE, dtBool, @fStrechData));
+  fSettingItems.Add(CreateSettingsItem(
+    'data_dist', 'Datenabstand', SETTINGS_FLAG_NONE, dtByte, @fDataDist));
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -576,27 +546,15 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TCPU.SetSettings(const aData: PSettingsItem);
-
-  procedure CheckColor(var aColor: Cardinal);
-  begin
-    if aColor shr 24 >= $FF then
-      aColor := $FE000000 or (aColor and $FFFFFF);
-  end;
-
+procedure TCPU.SetSettings(const aData: PSettingsItemRec);
 var
-  needDataUpdate: Boolean;
   i: Integer;
 begin
-  needDataUpdate := PByte(PSettingsItem(aData + 5)^.Data)^ <> fDataDist;
   inherited SetSettings(aData);
-  if needDataUpdate then
+  if fDataDist <= 0 then
+    fDataDist := 1;
+  if (fDataDist <> fDataDistOld) then
     InitCpuLoadData;
-
-  CheckColor(fColor);
-  CheckColor(fBgColor1);
-  CheckColor(fBgColor2);
-  CheckColor(fFontData.Color);
 
   CreateFonts;
   Resize(fIsSmall, fSizeMin.x, fSizeMin.y, fSizeMax.x, fSizeMax.y);
@@ -645,7 +603,6 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 destructor TCPU.Destroy;
 begin
-  FreeSettings;
   fWMIThread.Free;
 
   fFont.Free;

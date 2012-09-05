@@ -22,6 +22,9 @@ type
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   THardwareMonitor = class;
   EHardwareMonitorModul = class(Exception);
+
+  { THardwareMonitorModul }
+
   THardwareMonitorModul = class(TObject)
   private
     fOwner: THardwareMonitor;
@@ -38,7 +41,7 @@ type
     fRect: TRect;
     fLibHandle: Cardinal;
     fObjHandle: Pointer;
-    fSettingsArr: array of TSettingsItem;
+    fSettings: TSettingItemList;
     fModulInfoEx: TModulInfoEx;
     fName: String;
 
@@ -50,6 +53,7 @@ type
     fResize: TResizeProc;
     fUpdate: TUpdateProc;
     fDraw: TDrawProc;
+    fGetSettingCount: TGetSettingCountProc;
     fSetSettings: TSetSettingsProc;
     fGetSettings: TGetSettingsProc;
     fSendTouchReport: TSendTouchReportProc;
@@ -66,7 +70,6 @@ type
     procedure SetSettings(const aIndex: Integer; aValue: TSettingsItem);
 
     procedure UpdateRect;
-    procedure ClearSettings;
   public
     property IsSmall   : Boolean read fIsSmall    write SetIsSmall;
     property SmallSize : TPoint  read fSmallSize  write SetSmallSize;
@@ -467,7 +470,7 @@ function THardwareMonitorModul.GetSettingsCount: Integer;
 begin
   EnterCriticalSection(fDataCS);
   try
-    result := Length(fSettingsArr);
+    result := fSettings.Count;
   finally
     LeaveCriticalSection(fDataCS);
   end;
@@ -478,8 +481,8 @@ function THardwareMonitorModul.GetSettings(const aIndex: Integer): TSettingsItem
 begin
   EnterCriticalSection(fDataCS);
   try
-    if (aIndex >= 0) and (aIndex < Length(fSettingsArr)) then
-      result := fSettingsArr[aIndex]
+    if (aIndex >= 0) and (aIndex < fSettings.Count) then
+      result := fSettings[aIndex]
     else
       raise EHardwareMonitorModul.Create(format('GetSettings: index out of bounds (%d)', [aIndex]));
   finally
@@ -492,8 +495,8 @@ procedure THardwareMonitorModul.SetSettings(const aIndex: Integer; aValue: TSett
 begin
   EnterCriticalSection(fDataCS);
   try
-    if (aIndex >= 0) and (aIndex < Length(fSettingsArr)) then
-      fSettingsArr[aIndex] := aValue
+    if (aIndex >= 0) and (aIndex < fSettings.Count) then
+      fSettings[aIndex] := aValue
     else
       raise EHardwareMonitorModul.Create(format('SetSettings: index out of bounds (%d)', [aIndex]));
   finally
@@ -510,36 +513,6 @@ begin
       fPosition.x, fPosition.y,
       fPosition.x + fSmallSize.x,
       fPosition.y + fSmallSize.y);
-  finally
-    LeaveCriticalSection(fDataCS);
-  end;
-end;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure THardwareMonitorModul.ClearSettings;
-var
-  i: Integer;
-begin
-  EnterCriticalSection(fDataCS);
-  try
-    for i := 0 to High(fSettingsArr) do with fSettingsArr[i] do begin
-      case DataType of
-        dtInt32:
-          Dispose(PInteger(Data));
-        dtFloat32:
-          Dispose(PSingle(Data));
-        dtBool:
-          Dispose(PBoolean(Data));
-        dtString, dtFile, dtPicture, dtIdentStr:
-          Dispose(PString(Data));
-        dtColor:
-          Dispose(PCardinal(Data));
-        dtFont:
-          Dispose(PModulFontDataEx(Data));
-        dtByte:
-          Dispose(PByte(Data));
-      end;
-    end;
   finally
     LeaveCriticalSection(fDataCS);
   end;
@@ -612,57 +585,49 @@ procedure THardwareMonitorModul.GetSettings;
 var
   i: Integer;
   c: Integer;
-  p: PSettingsItem;
+  tmpSetArr: array of TSettingsItemRec;
+  p: PSettingsItemRec;
+  item: TSettingsItem;
 begin
   if not Assigned(fGetSettings) then
     exit;
-  ClearSettings;
+  fSettings.Clear;
   EnterCriticalSection(fDataCS);
   EnterCriticalSection(fEventCS);
   try
-    fGetSettings(fObjHandle, c, p);
-    SetLength(fSettingsArr, c);
-    for i := 0 to High(fSettingsArr) do with fSettingsArr[i] do begin
-      Name     := p^.Name;
-      Min      := p^.Min;
-      Max      := p^.Max;
-      DataType := p^.DataType;
-      case DataType of
-        dtInt32: begin
-          New(PInteger(Data));
-          PInteger(Data)^ := PInteger(p^.Data)^;
+    c := fGetSettingCount(fObjHandle);
+    if c = 0 then
+      exit;
+
+    SetLength(tmpSetArr, c);
+    FillChar(tmpSetArr[0], Length(tmpSetArr)*SizeOf(tmpSetArr[0]), 0);
+    p := @tmpSetArr[0];
+    fGetSettings(fObjHandle, p);
+
+    for i := 0 to c-1 do begin
+      item := TSettingsItem.Create(false);
+      fSettings.Add(item);
+      item.IdentStr   := p^.IdentStr;
+      item.DisplayStr := p^.DisplayStr;
+      item.DataType   := p^.DataType;
+      item.Flags      := p^.Flags;
+      if Assigned(p^.Data) then
+        case item.DataType of
+          dtBool:
+            System.PBoolean(item.Data)^ := System.PBoolean(p^.Data)^;
+          dtFloat32:
+            PSingle(item.Data)^ := PSingle(p^.Data)^;
+          dtInt32:
+            PInteger(item.Data)^ := PInteger(p^.Data)^;
+          dtByte:
+            PByte(item.Data)^ := PByte(p^.Data)^;
+          dtString:
+            PString(item.Data)^ := PChar(p^.Data);
         end;
-        dtFloat32: begin
-          New(PSingle(Data));
-          PSingle(Data)^ := PSingle(p^.Data)^;
-        end;
-        dtBool: begin
-          New(PBoolean(Data));
-          PBoolean(Data)^ := PBoolean(p^.Data)^;
-        end;
-        dtString, dtFile, dtPicture, dtIdentStr: begin
-          New(PString(Data));
-          PString(Data)^ := PChar(p^.Data);
-        end;
-        dtColor: begin
-          New(PCardinal(Data));
-          PCardinal(Data)^ := PCardinal(p^.Data)^;
-        end;
-        dtFont: begin
-          New(PModulFontDataEx(Data));
-          PModulFontDataEx(Data)^.Color := PModulFontData(p^.Data)^.Color;
-          PModulFontDataEx(Data)^.Name  := PModulFontData(p^.Data)^.Name;
-          PModulFontDataEx(Data)^.Style := PModulFontData(p^.Data)^.Style;
-          PModulFontDataEx(Data)^.Size  := PModulFontData(p^.Data)^.Size;
-        end;
-        dtByte: begin
-          New(PByte(Data));
-          PByte(Data)^ := PByte(p^.Data)^;
-        end;
-      end;
       inc(p);
     end;
   finally
+    SetLength(tmpSetArr, 0);
     LeaveCriticalSection(fDataCS);
     LeaveCriticalSection(fEventCS);
   end;
@@ -671,77 +636,37 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure THardwareMonitorModul.SetSettings;
 var
-  arr: array of TSettingsItem;
-  p: PSettingsItem;
+  arr: array of TSettingsItemRec;
+  p: PSettingsItemRec;
   i: Integer;
 begin
   if not Assigned(fSetSettings) then
     exit;
   EnterCriticalSection(fEventCS);
+  EnterCriticalSection(fDataCS);
   try
-    SetLength(arr, Length(fSettingsArr));
-    p := @fSettingsArr[0];
-    for i := 0 to High(arr) do with arr[i] do begin
-      Name     := p^.Name;
-      Min      := p^.Min;
-      Max      := p^.Max;
-      DataType := p^.DataType;
+    if fSettings.Count = 0 then
+      exit;
+    SetLength(arr, fSettings.Count);
+    p := @arr[0];
+    for i := 0 to fSettings.Count-1 do with fSettings[i] do begin
+      p^.IdentStr   := PChar(IdentStr);
+      p^.DisplayStr := PChar(DisplayStr);
+      p^.DataType   := DataType;
+      p^.Flags      := Flags;
       case DataType of
-        dtInt32: begin
-          New(PInteger(Data));
-          PInteger(Data)^ := PInteger(p^.Data)^;
-        end;
-        dtFloat32: begin
-          New(PSingle(Data));
-          PSingle(Data)^ := PSingle(p^.Data)^;
-        end;
-        dtBool: begin
-          New(PBoolean(Data));
-          PBoolean(Data)^ := PBoolean(p^.Data)^;
-        end;
-        dtString, dtFile, dtPicture, dtIdentStr: begin
-          PChar(Data) := PChar(PString(p^.Data)^);
-        end;
-        dtColor: begin
-          New(PCardinal(Data));
-          PCardinal(Data)^ := PCardinal(p^.Data)^;
-        end;
-        dtFont: begin
-          New(PModulFontData(Data));
-          PModulFontData(Data)^.Color := PModulFontDataEx(p^.Data)^.Color;
-          PModulFontData(Data)^.Name  := PChar(PModulFontDataEx(p^.Data)^.Name);
-          PModulFontData(Data)^.Style := PModulFontDataEx(p^.Data)^.Style;
-          PModulFontData(Data)^.Size  := PModulFontDataEx(p^.Data)^.Size;
-        end;
-        dtByte: begin
-          New(PByte(Data));
-          PByte(Data)^ := PByte(p^.Data)^;
-        end;
+        dtString:
+          p^.Data := PChar(PString(Data)^);
+      else
+        p^.Data := Data;
       end;
       inc(p);
     end;
     fSetSettings(fObjHandle, @arr[0]);
-    for i := 0 to High(arr) do with arr[i] do begin
-      case DataType of
-        dtInt32:
-          Dispose(PInteger(Data));
-        dtFloat32:
-          Dispose(PSingle(Data));
-        dtBool:
-          Dispose(PBoolean(Data));
-        dtString, dtFile, dtPicture, dtIdentStr:
-          PChar(Data) := '';
-        dtColor:
-          Dispose(PCardinal(Data));
-        dtFont:
-          Dispose(PModulFontData(Data));
-        dtByte:
-          Dispose(PByte(Data));
-      end;
-    end;
-    SetLength(arr, 0);
   finally
+    SetLength(arr, 0);
     LeaveCriticalSection(fEventCS);
+    LeaveCriticalSection(fDataCS);
   end;
 end;
 
@@ -760,17 +685,6 @@ end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure THardwareMonitorModul.SaveToFile(const aSection: TmcfSection);
-
-  procedure SaveFont(const aSection: TmcfSection; const aFont: TModulFontDataEx);
-  begin
-    with aSection do begin
-      SetString('Name', aFont.Name);
-      SetInt('Color', aFont.Color);
-      SetInt('Size', aFont.Size);
-      SetInt('Style', aFont.Style)
-    end;
-  end;
-
 var
   i: Integer;
 begin
@@ -779,31 +693,30 @@ begin
     aSection.SetString('Name', fName);
     aSection.SetString('LibName', fModulInfoEx.libName);
     aSection.SetString('LibVersion', fModulInfoEx.Version);
-    with aSection.Sections['Position'] do begin
-      SetInt('x', Position.x);
-      SetInt('y', Position.y);
-    end;
-    with aSection.Sections['SmallSize'] do begin
-      SetInt('x', SmallSize.x);
-      SetInt('y', SmallSize.y);
-    end;
-    with aSection.Sections['Modul'] do begin
+    with aSection.Sections['ModulSettings'] do begin
+      with Sections['Position'] do begin
+        SetInt('x', Position.x);
+        SetInt('y', Position.y);
+      end;
+      with Sections['SmallSize'] do begin
+        SetInt('x', SmallSize.x);
+        SetInt('y', SmallSize.y);
+      end;
       GetSettings;
-      for i := 0 to High(fSettingsArr) do begin
-        case fSettingsArr[i].DataType of
-          dtInt32, dtByte:
-            SetInt(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'), PInteger(fSettingsArr[i].Data)^);
-          dtFloat32:
-            SetFloat(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'), PSingle(fSettingsArr[i].Data)^);
-          dtBool:
-            SetBool(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'), Boolean(PBoolean(fSettingsArr[i].Data)^));
-          dtString, dtFile, dtPicture, dtIdentStr:
-            SetString(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'), PString(fSettingsArr[i].Data)^);
-          dtColor:
-            SetInt(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'), PCardinal(fSettingsArr[i].Data)^);
-          dtFont:
-            SaveFont(Sections[mcfEscapeSpecChars(fSettingsArr[i].Name, '_')], PModulFontDataEx(fSettingsArr[i].Data)^);
-        end;
+      for i := 0 to fSettings.Count-1 do with fSettings[i] do begin
+        if Assigned(Data) then
+          case DataType of
+            dtBool:
+              SetBool(IdentStr, System.PBoolean(Data)^);
+            dtByte:
+              SetInt(IdentStr, PByte(Data)^);
+            dtFloat32:
+              SetFloat(IdentStr, PSingle(Data)^);
+            dtInt32:
+              SetInt(IdentStr, PInteger(Data)^);
+            dtString:
+              SetString(IdentStr, PString(Data)^);
+          end;
       end;
     end;
   finally
@@ -821,61 +734,29 @@ begin
   EnterCriticalSection(fEventCS);
   try
     fName := aSection.GetString('Name', fName);
-    with aSection.Sections['Position'] do begin
-      fPosition.x := GetInt('x', fPosition.x);
-      fPosition.y := GetInt('y', fPosition.y);
-    end;
-    with aSection.Sections['SmallSize'] do begin
-      fSmallSize.x := GetInt('x', fSmallSize.x);
-      fSmallSize.y := GetInt('y', fSmallSize.y);
-    end;
-    with aSection.Sections['Modul'] do begin
-      for i := 0 to High(fSettingsArr) do begin
-        case fSettingsArr[i].DataType of
-          dtInt32: begin
-            PInteger(fSettingsArr[i].Data)^ := GetInt(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'),
-              PInteger(fSettingsArr[i].Data)^);
-            if (fSettingsArr[i].Min <> 0) or (fSettingsArr[i].Max <> 0) then begin
-              if (PInteger(fSettingsArr[i].Data)^ < fSettingsArr[i].Min) then
-                PInteger(fSettingsArr[i].Data)^ := Round(fSettingsArr[i].Min);
-              if (PInteger(fSettingsArr[i].Data)^ > fSettingsArr[i].Max) then
-                PInteger(fSettingsArr[i].Data)^ := Round(fSettingsArr[i].Max);
-            end;
+    with aSection.Sections['ModulSettings'] do begin
+      with Sections['Position'] do begin
+        fPosition.x := GetInt('x', fPosition.x);
+        fPosition.y := GetInt('y', fPosition.y);
+      end;
+      with Sections['SmallSize'] do begin
+        fSmallSize.x := GetInt('x', fSmallSize.x);
+        fSmallSize.y := GetInt('y', fSmallSize.y);
+      end;
+      for i := 0 to fSettings.Count-1 do with fSettings[i] do begin
+        if Assigned(Data) then
+          case DataType of
+            dtBool:
+              System.PBoolean(Data)^ := GetBool(IdentStr, System.PBoolean(Data)^);
+            dtByte:
+              PByte(Data)^ := GetInt(IdentStr, PByte(Data)^);
+            dtFloat32:
+              PSingle(Data)^ := GetFloat(IdentStr, PSingle(Data)^);
+            dtInt32:
+              PInteger(Data)^ := GetInt(IdentStr, PInteger(Data)^);
+            dtString:
+              PString(Data)^ := GetString(IdentStr, PString(Data)^);
           end;
-          dtByte: begin
-            PByte(fSettingsArr[i].Data)^ := GetInt(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'),
-              PByte(fSettingsArr[i].Data)^);
-            if (fSettingsArr[i].Min <> 0) or (fSettingsArr[i].Max <> 0) then begin
-              if (PByte(fSettingsArr[i].Data)^ < fSettingsArr[i].Min) then
-                PByte(fSettingsArr[i].Data)^ := Round(fSettingsArr[i].Min);
-              if (PByte(fSettingsArr[i].Data)^ > fSettingsArr[i].Max) then
-                PByte(fSettingsArr[i].Data)^ := Round(fSettingsArr[i].Max);
-            end;
-          end;
-          dtFloat32: begin
-            PSingle(fSettingsArr[i].Data)^ := GetFloat(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'),
-              PSingle(fSettingsArr[i].Data)^);
-            if (fSettingsArr[i].Min <> 0) or (fSettingsArr[i].Max <> 0) then begin
-              if (PSingle(fSettingsArr[i].Data)^ < fSettingsArr[i].Min) then
-                PSingle(fSettingsArr[i].Data)^ := fSettingsArr[i].Min;
-              if (PSingle(fSettingsArr[i].Data)^ > fSettingsArr[i].Max) then
-                PSingle(fSettingsArr[i].Data)^ := fSettingsArr[i].Max;
-            end;
-          end;
-          dtBool: begin
-            PBoolean(fSettingsArr[i].Data)^ := Byte(GetBool(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'),
-              Boolean(PBoolean(fSettingsArr[i].Data)^)));
-          end;
-          dtString, dtFile, dtPicture, dtIdentStr:
-            PString(fSettingsArr[i].Data)^ := GetString(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'),
-              PString(fSettingsArr[i].Data)^);
-          dtColor:
-            PCardinal(fSettingsArr[i].Data)^ := GetInt(mcfEscapeSpecChars(fSettingsArr[i].Name, '_'),
-              PCardinal(fSettingsArr[i].Data)^);
-          dtFont: begin
-
-          end;
-        end;
       end;
     end;
   finally
@@ -930,6 +811,7 @@ begin
         fResize          := TResizeProc(LoadProcedure('Resize'));
         fUpdate          := TUpdateProc(LoadProcedure('Update'));
         fDraw            := TDrawProc(LoadProcedure('Draw'));
+        fGetSettingCount := TGetSettingCountProc(LoadProcedure('GetSettingCount'));
         fSetSettings     := TSetSettingsProc(LoadProcedure('SetSettings'));
         fGetSettings     := TGetSettingsProc(LoadProcedure('GetSettings'));
         fSendTouchReport := TSendTouchReportProc(LoadProcedure('SendTouchReport'));
@@ -1018,14 +900,14 @@ begin
   SetPosition(Classes.Point(0, 0));
   SetSmallSize(Classes.Point(480, 200));
   SetLargeSize(Classes.Point(480, 272));
-  SetLength(fSettingsArr, 0);
   fIsSmall := true;
+  fSettings := TSettingItemList.Create(true);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 destructor THardwareMonitorModul.Destroy;
 begin
-  ClearSettings;
+  FreeAndNil(fSettings);
   FreeLib;
   DoneCriticalsection(fDataCS);
   DoneCriticalsection(fEventCS);

@@ -151,7 +151,7 @@ uses
   strutils;
 
 const
-  SPEC_CHARS: array[0..4] of Char = ('.', ';', ':', '=', ' ');
+  SPEC_CHARS: array[0..5] of Char = ('.', ';', ':', '=', ' ', '''');
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function CheckSpecChars(const aName: String): Boolean;
@@ -789,16 +789,21 @@ procedure TmcfFile.LoadFromStream(const aStream: TStream);
   var
     buf: String;
     c: Char;
-    isStr: Boolean;
+    isStr, hasInvComma: Boolean;
   begin
     buf := '';
     c := NextChar;
     isStr := false;
+    hasInvComma := false;
     while (c <> #0) do begin
-      if (c = '''') then
+      if (c = '''') then begin
         isStr := not isStr;
+        hasInvComma := true;
+      end;
       if (c = ';') and not isStr then
         break;
+      if hasInvComma and not isStr and (c <> '''') and (c <> ' ') then
+        raise EmcfParseError.Create('expected '';'' but '''+c+''' found!');
       buf := buf + c;
       c := NextChar;
     end;
@@ -807,6 +812,7 @@ procedure TmcfFile.LoadFromStream(const aStream: TStream);
       Delete(buf, 1, 1);
     if (Length(buf) > 0) and (buf[Length(buf)] = '''') then
       Delete(buf, Length(buf), 1);
+    buf := StringReplace(buf, '''''', '''', [rfReplaceAll]);
     aValue.SetString(buf);
   end;
 
@@ -886,7 +892,7 @@ procedure TmcfFile.SaveToStream(const aStream: TStream);
       for i := 0 to Attributes.Count-1 do begin
         s := aPrefix + Attributes.Names[i] + ' = ';
         if not CheckSpecChars(Attributes[i].GetString) then
-          s := s + '''' + Attributes[i].GetString + ''''
+          s := s + '''' + StringReplace(Attributes[i].GetString, '''', '''''', [rfReplaceAll]) + ''''
         else
           s := s + Attributes[i].GetString;
         s := s + ';' + sLineBreak;

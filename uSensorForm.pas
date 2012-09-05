@@ -9,22 +9,6 @@ uses
   StdCtrls, ExtCtrls, ActiveX, ComObj, Variants, fgl;
 
 type
-  TNodeDataType = (dtHardware = 1, dtSensor, dtUnknown, dtClock, dtLoad, dtTemp, dtVolt, dtFan);
-  TNodeDataTypes = set of TNodeDataType;
-  TNodeData = record
-    Typ: TNodeDataTypes;
-    Identifier: String;
-    Name: String;
-    Min: Single;
-    Max: Single;
-    Value: Single;
-  end;
-  PNodeData = ^TNodeData;
-
-  TSensorDataList = specialize TFPGList<PNodeData>;
-
-  { TSensorForm }
-
   TSensorForm = class(TForm)
     OKBt: TButton;
     CancelBt: TButton;
@@ -45,7 +29,7 @@ type
     fSWbemLocator: OLEVariant;
     fWMIService: OLEVariant;
     fRootNode: PVirtualNode;
-    fSensorData: TSensorDataList;
+    fSensorData: TList;
 
     procedure BuildTree;
     procedure UpdateTree;
@@ -69,6 +53,19 @@ const
   WbemComputer        ='localhost';
   wbemFlagForwardOnly = $00000020;
 
+type
+  TNodeDataType = (dtHardware = 1, dtSensor, dtUnknown, dtClock, dtLoad, dtTemp, dtVolt, dtFan);
+  TNodeDataTypes = set of TNodeDataType;
+  TNodeData = record
+    Typ: TNodeDataTypes;
+    Identifier: String;
+    Name: String;
+    Min: Single;
+    Max: Single;
+    Value: Single;
+  end;
+  PNodeData = ^TNodeData;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +73,7 @@ procedure TSensorForm.FormCreate(Sender: TObject);
 begin
   fSWbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
   fWMIService   := FSWbemLocator.ConnectServer(WbemComputer, 'root\OpenHardwareMonitor', WbemUser, WbemPassword);
-  fSensorData   := TSensorDataList.Create;
+  fSensorData   := TList.Create;
   SensorVST.NodeDataSize := SizeOf(TNodeData);
 end;
 
@@ -335,7 +332,7 @@ procedure TSensorForm.UpdateTree;
     i: Integer;
   begin
     for i := 0 to fSensorData.Count-1 do
-      if (fSensorData[i]^.Identifier = aIdent) then begin
+      if (PNodeData(fSensorData[i])^.Identifier = aIdent) then begin
         result := fSensorData[i];
         exit;
       end;

@@ -72,21 +72,28 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure GetSettings(aHandle: Pointer; out aCount: Integer; out aData: PSettingsItem); stdcall;
+function GetSettingCount(aHandle: Pointer): Integer; stdcall;
 begin
-  aData := nil;
-  aCount := 0;
+  result := 0;
   try
     if Assigned(aHandle) then
-      TBasicModul(aHandle).GetSettings(aCount, aData);
-  except
-    aData := nil;
-    aCount := 0;
+      result := TBasicModul(aHandle).GetSettingCount;
+  finally
   end;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure SetSettings(aHandle: Pointer; aData: PSettingsItem); stdcall;
+procedure GetSettings(aHandle: Pointer; aData: PSettingsItemRec); stdcall;
+begin
+  try
+    if Assigned(aHandle) then
+      TBasicModul(aHandle).GetSettings(aData);
+  except
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure SetSettings(aHandle: Pointer; aData: PSettingsItemRec); stdcall;
 begin
   try
     if Assigned(aHandle) then
@@ -127,6 +134,7 @@ exports
   Draw            name 'Draw',
   InitLibData     name 'InitLibData',
   FreeLibData     name 'FreeLibData',
+  GetSettingCount name 'GetSettingCount',
   GetSettings     name 'GetSettings',
   SetSettings     name 'SetSettings',
   SendTouchReport name 'SendTouchReport';

@@ -11,8 +11,8 @@
         <UnitName Value="text"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="9"/>
+        <TopLine Value="107"/>
+        <CursorPos X="5" Y="142"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -23,8 +23,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="100"/>
-        <CursorPos X="24" Y="108"/>
+        <TopLine Value="73"/>
+        <CursorPos X="42" Y="94"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -58,7 +58,7 @@
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="24" HistoryIndex="23">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="uText.pas"/>
         <Caret Line="25" Column="16" TopLine="1"/>
@@ -155,6 +155,30 @@
         <Filename Value="uText.pas"/>
         <Caret Line="144" Column="45" TopLine="121"/>
       </Position24>
+      <Position25>
+        <Filename Value="uText.pas"/>
+        <Caret Line="120" Column="40" TopLine="100"/>
+      </Position25>
+      <Position26>
+        <Filename Value="uText.pas"/>
+        <Caret Line="30" Column="56" TopLine="12"/>
+      </Position26>
+      <Position27>
+        <Filename Value="uText.pas"/>
+        <Caret Line="88" Column="55" TopLine="87"/>
+      </Position27>
+      <Position28>
+        <Filename Value="uText.pas"/>
+        <Caret Line="31" Column="75" TopLine="13"/>
+      </Position28>
+      <Position29>
+        <Filename Value="uText.pas"/>
+        <Caret Line="111" Column="1" TopLine="94"/>
+      </Position29>
+      <Position30>
+        <Filename Value="uText.pas"/>
+        <Caret Line="87" Column="58" TopLine="69"/>
+      </Position30>
     </JumpHistory>
   </ProjectSession>
   <EditorMacros Count="0"/>

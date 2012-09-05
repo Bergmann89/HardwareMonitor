@@ -75,8 +75,7 @@ type
     procedure Update; override;
     function Draw: TDrawResult; override;
     function SendTouchReport(const aPoint: TPoint; const aPressure: Byte; const aMode: TTouchMode): Boolean; override;
-    procedure GetSettings(out aCount: Integer; out aData: PSettingsItem); override;
-    procedure SetSettings(const aData: PSettingsItem); override;
+    procedure SetSettings(const aData: PSettingsItemRec); override;
 
     constructor Create(const aThreadClass: TwmiThreadClass);
     destructor Destroy; override;
@@ -343,22 +342,9 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TwmiGraphModul.GetSettings(out aCount: Integer; out aData: PSettingsItem);
-begin
-  inherited GetSettings(aCount, aData);
-  fSettingsArr[6].Data := PAnsiChar(fFirstLineFormat);
-  fSettingsArr[7].Data := PAnsiChar(fSecondLineFormat);
-end;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TwmiGraphModul.SetSettings(const aData: PSettingsItem);
+procedure TwmiGraphModul.SetSettings(const aData: PSettingsItemRec);
 begin
   inherited SetSettings(aData);
-//  CheckColor(fFontData.Color);
-//  CheckColor(fBgColor);
-//  CheckColor(fColor);
-  fFirstLineFormat  := PAnsiChar(fSettingsArr[6].Data);
-  fSecondLineFormat := PAnsiChar(fSettingsArr[7].Data);
   CreateFonts;
 end;
 
@@ -389,47 +375,21 @@ begin
   fGraphic.SetTextRenderingHint(TextRenderingHintAntiAlias);
   CreateFonts;
 
-  SetLength(fSettingsArr, 8);
-  with fSettingsArr[0] do begin
-    Name     := 'Farbe';
-    DataType := dtColor;
-    Data     := @fColor
-  end;
-  with fSettingsArr[1] do begin
-    Name     := 'Hintergrundfarbe';
-    DataType := dtColor;
-    Data     := @fBgColor;
-  end;
-  with fSettingsArr[2] do begin
-    Name     := 'Liniendiagramm';
-    DataType := dtBool;
-    Data     := @fLineChart;
-  end;
-  with fSettingsArr[3] do begin
-    Name     := 'Graphen zeichnen';
-    DataType := dtBool;
-    Data     := @fDrawGraph;
-  end;
-  with fSettingsArr[4] do begin
-    Name     := 'Font';
-    DataType := dtFont;
-    Data     := @fFontData;
-  end;
-  with fSettingsArr[5] do begin
-    Name     := 'Größe 2. Zeile';
-    DataType := dtFloat32;
-    Data     := @fSecondLineSize;
-  end;
-  with fSettingsArr[6] do begin
-    Name     := 'Zeile 1';
-    DataType := dtString;
-    Data     := PAnsiChar(fFirstLineFormat);
-  end;
-  with fSettingsArr[7] do begin
-    Name     := 'Zeile 2';
-    DataType := dtString;
-    Data     := PAnsiChar(fSecondLineFormat);
-  end;
+  fSettingItems.Add(CreateSettingsItem(
+    'color', 'Farbe', SETTINGS_FLAG_COLOR, dtInt32, @fColor));
+  fSettingItems.Add(CreateSettingsItem(
+    'background_color', 'Hintergrundfarbe', SETTINGS_FLAG_COLOR, dtInt32, @fBgColor));
+  fSettingItems.Add(CreateSettingsItem(
+    'linechart', 'Liniendiagramm', SETTINGS_FLAG_NONE, dtBool, @fLineChart));
+  fSettingItems.Add(CreateSettingsItem(
+    'drawchart', 'Graphen zeichnen', SETTINGS_FLAG_NONE, dtBool, @fDrawGraph));
+  CreateFontSettingItems(fSettingItems, 'font', 'Font', @fFontData);
+  fSettingItems.Add(CreateSettingsItem(
+    '2nd_line_size', 'Größe 2. Zeile', SETTINGS_FLAG_NONE, dtFloat32, @fSecondLineSize));
+  fSettingItems.Add(CreateSettingsItem(
+    'line1_format', 'Zeile 1', SETTINGS_FLAG_NONE, dtString, @fFirstLineFormat));
+  fSettingItems.Add(CreateSettingsItem(
+    'line2_format', 'Zeile 2', SETTINGS_FLAG_NONE, dtString, @fSecondLineFormat));
 
   fUpdateThread := aThreadClass.Create;
 end;

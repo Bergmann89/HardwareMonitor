@@ -45,10 +45,11 @@
         <Filename Value="clock.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="clock"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="43"/>
-        <CursorPos X="24" Y="54"/>
+        <TopLine Value="48"/>
+        <CursorPos X="18" Y="66"/>
         <UsageCount Value="76"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -150,11 +151,10 @@
         <Filename Value="uClock.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uClock"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="200"/>
-        <CursorPos X="70" Y="216"/>
+        <TopLine Value="143"/>
+        <CursorPos X="1" Y="155"/>
         <UsageCount Value="39"/>
         <Loaded Value="True"/>
       </Unit13>
@@ -164,8 +164,8 @@
         <UnitName Value="uModulAPI"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="184"/>
-        <CursorPos X="1" Y="202"/>
+        <TopLine Value="203"/>
+        <CursorPos X="51" Y="163"/>
         <UsageCount Value="39"/>
         <Loaded Value="True"/>
       </Unit14>
@@ -205,123 +205,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="201" Column="1" TopLine="186"/>
+        <Caret Line="218" Column="1" TopLine="189"/>
       </Position1>
       <Position2>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="202" Column="1" TopLine="186"/>
+        <Caret Line="230" Column="1" TopLine="212"/>
       </Position2>
       <Position3>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="213" Column="1" TopLine="186"/>
+        <Caret Line="202" Column="1" TopLine="184"/>
       </Position3>
       <Position4>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="214" Column="1" TopLine="192"/>
+        <Caret Line="221" Column="1" TopLine="203"/>
       </Position4>
       <Position5>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="230" Column="1" TopLine="191"/>
+        <Caret Line="222" Column="1" TopLine="203"/>
       </Position5>
       <Position6>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="202" Column="1" TopLine="191"/>
+        <Caret Line="212" Column="33" TopLine="200"/>
       </Position6>
       <Position7>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="207" Column="1" TopLine="191"/>
+        <Caret Line="224" Column="1" TopLine="200"/>
       </Position7>
       <Position8>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="230" Column="1" TopLine="212"/>
+        <Caret Line="230" Column="1" TopLine="201"/>
       </Position8>
       <Position9>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="202" Column="1" TopLine="184"/>
+        <Caret Line="232" Column="1" TopLine="203"/>
       </Position9>
       <Position10>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="207" Column="1" TopLine="184"/>
+        <Caret Line="212" Column="17" TopLine="194"/>
       </Position10>
       <Position11>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="230" Column="1" TopLine="212"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="207" Column="1" TopLine="200"/>
       </Position11>
       <Position12>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="202" Column="1" TopLine="184"/>
+        <Caret Line="200" Column="1" TopLine="193"/>
       </Position12>
       <Position13>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="217" Column="1" TopLine="188"/>
+        <Caret Line="201" Column="1" TopLine="193"/>
       </Position13>
       <Position14>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="218" Column="1" TopLine="189"/>
+        <Caret Line="202" Column="1" TopLine="193"/>
       </Position14>
       <Position15>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="230" Column="1" TopLine="212"/>
+        <Caret Line="212" Column="44" TopLine="193"/>
       </Position15>
       <Position16>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="202" Column="1" TopLine="184"/>
+        <Caret Line="237" Column="1" TopLine="219"/>
       </Position16>
       <Position17>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="221" Column="1" TopLine="203"/>
+        <Caret Line="202" Column="1" TopLine="184"/>
       </Position17>
       <Position18>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="222" Column="1" TopLine="203"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="216" Column="70" TopLine="200"/>
       </Position18>
       <Position19>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="212" Column="33" TopLine="200"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="46" Column="56" TopLine="28"/>
       </Position19>
       <Position20>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="224" Column="1" TopLine="200"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="207" Column="32" TopLine="201"/>
       </Position20>
       <Position21>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="230" Column="1" TopLine="201"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="47" Column="1" TopLine="27"/>
       </Position21>
       <Position22>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="232" Column="1" TopLine="203"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="204" Column="59" TopLine="186"/>
       </Position22>
       <Position23>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="212" Column="17" TopLine="194"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="248" Column="1" TopLine="236"/>
       </Position23>
       <Position24>
         <Filename Value="uClock.pas"/>
-        <Caret Line="207" Column="1" TopLine="200"/>
+        <Caret Line="240" Column="77" TopLine="222"/>
       </Position24>
       <Position25>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="200" Column="1" TopLine="193"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="247" Column="58" TopLine="229"/>
       </Position25>
       <Position26>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="201" Column="1" TopLine="193"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="49" Column="17" TopLine="4"/>
       </Position26>
       <Position27>
         <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="202" Column="1" TopLine="193"/>
+        <Caret Line="421" Column="3" TopLine="418"/>
       </Position27>
       <Position28>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="212" Column="44" TopLine="193"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="240" Column="77" TopLine="220"/>
       </Position28>
       <Position29>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="237" Column="1" TopLine="219"/>
+        <Filename Value="uClock.pas"/>
+        <Caret Line="8" Column="76" TopLine="1"/>
       </Position29>
       <Position30>
-        <Filename Value="..\..\uModulAPI.pas"/>
-        <Caret Line="202" Column="1" TopLine="184"/>
+        <Filename Value="clock.lpr"/>
+        <Caret Line="144" Column="5" TopLine="109"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -356,15 +356,6 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="1">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsGlobal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="..\..\uModulAPI.pas"/>
-        <Line Value="155"/>
-      </Item1>
-    </BreakPoints>
     <Watches Count="5">
       <Item1>
         <Expression Value="fBgColor"/>

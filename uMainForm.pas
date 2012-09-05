@@ -10,12 +10,8 @@ uses
   uMCF;
 
 type
-  TSettingsItemEx = packed record
-    Event: TNotifyEvent;
-    Tag: PtrInt;
-    i: TSettingsItem;
-  end;
-  PSettingsItemEx = ^TSettingsItemEx;
+  TNodeDataFlag = (nfFreeSettings, nfUpdateChildren, nfUpdateParent);
+  TNodeDataFlags = set of TNodeDataFlag;
 
   { TMainForm }
 
@@ -64,7 +60,6 @@ type
     procedure ActiveModulesLBClick(Sender: TObject);
     procedure ActiveModulesLBDblClick(Sender: TObject);
     procedure AddModulBtClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure DelModulBtClick(Sender: TObject);
     procedure DisplaysCLBClick(Sender: TObject);
     procedure DisplaysCLBClickCheck(Sender: TObject);
@@ -99,8 +94,8 @@ type
     fIsEditing, fPreviewNeedUpdate: Boolean;
     fFormatSettings: TFormatSettings;
 
-    fBgNode: PVirtualNode;
-    fStartupNode: PVirtualNode;
+    fBackgroundPic: String;
+    fStartupPic: String;
     fUpdateRate: Integer;
     fModulNode: PVirtualNode;
 
@@ -119,7 +114,9 @@ type
     procedure UpdateDisplaysCLB;
     procedure RepaintNodes(const aNode: PVirtualNode);
     procedure LoadModulInfo(const ID: Integer);
-    procedure SaveModulData(const aID: Integer);
+    procedure SaveModulData(const ID: Integer);
+    function CreateNode(aParent: PVirtualNode; aEvent: TNotifyEvent;
+      aFlags: TNodeDataFlags; aSettings: TSettingsItem): PVirtualNode;
     procedure BuildModulSettingsTree(aModul: THardwareMonitorModul);
     procedure LoadDisplayInfo(const ID: Integer);
     procedure HardwareMonitorUpdate(aSender: TObject);
@@ -137,13 +134,21 @@ implementation
 
 uses
   uUSBD480_API, LCLIntf, LCLType, uUtils, FileCtrl, JwaTlHelp32, windows,
-  uSensorForm, uColorForm;
+  uSensorForm, uColorForm, GDIPAPI;
 
 const
   MODUL_CURSER: array[0..9] of Integer = (crDefault, crSizeNWSE, crSizeNS, crSizeNESW,
     crSizeWE, crSizeNWSE, crSizeNS, crSizeNESW, crSizeWE, crHandPoint);
   NODE_DATA_UPDATE_CHILDREN = 1;
   NODE_DATA_UPDATE_PARENT   = 2;
+
+type
+  TNodeData = packed record
+    Event: TNotifyEvent;
+    Flags: TNodeDataFlags;
+    Settings: TSettingsItem;
+  end;
+  PNodeData = ^TNodeData;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.OnChangeModulSizePos(Sender: TObject);
@@ -157,19 +162,17 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.OnChangeBackground(Sender: TObject);
 var
-  d: PSettingsItemEx;
   pic: TPicture;
 begin
   if not Assigned(fActiveMonitor) then
     exit;
-  d := SettingsVST.GetNodeData(fBgNode);
-  if Assigned(d) and (d^.i.DataType = dtPicture) and FileExists(PString(d^.i.Data)^) then begin
+
+  if FileExists(fBackgroundPic) then begin
     pic := TPicture.Create;
     try
-      pic.LoadFromFile(PString(d^.i.Data)^);
+      pic.LoadFromFile(fBackgroundPic);
       fActiveMonitor.SetBackground(pic.Graphic);
       fActiveMonitor.Update(true);
-      PreviewPB.Repaint;
     finally
       pic.Free;
     end;
@@ -179,16 +182,15 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.OnChangeStartPic(Sender: TObject);
 var
-  d: PSettingsItemEx;
   pic: TPicture;
 begin
   if not Assigned(fActiveMonitor) then
     exit;
-  d := SettingsVST.GetNodeData(fStartupNode);
-  if Assigned(d) and (d^.i.DataType = dtPicture) and FileExists(PString(d^.i.Data)^) then begin
+
+  if FileExists(fStartupPic) then begin
     pic := TPicture.Create;
     try
-      pic.LoadFromFile(PString(d^.i.Data)^);
+      pic.LoadFromFile(fStartupPic);
       fActiveMonitor.SetStartupImage(pic.Graphic);
     finally
       pic.Free;
@@ -384,10 +386,12 @@ begin
   if not Assigned(aNode) then
     exit;
   SettingsVST.RepaintNode(aNode);
-  n := SettingsVST.GetFirstChild(aNode);
-  while Assigned(n) do begin
-    RepaintNodes(n);
-    n := SettingsVST.GetNextSibling(n);
+  if SettingsVST.Expanded[aNode] then begin
+    n := SettingsVST.GetFirstChild(aNode);
+    while Assigned(n) do begin
+      RepaintNodes(n);
+      n := SettingsVST.GetNextSibling(n);
+    end;
   end;
 end;
 
@@ -408,112 +412,130 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TMainForm.SaveModulData(const aID: Integer);
+procedure TMainForm.SaveModulData(const ID: Integer);
 begin
 
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TMainForm.BuildModulSettingsTree(aModul: THardwareMonitorModul);
+function TMainForm.CreateNode(aParent: PVirtualNode; aEvent: TNotifyEvent;
+  aFlags: TNodeDataFlags; aSettings: TSettingsItem): PVirtualNode;
 var
-  n1: PVirtualNode;
-  d: PSettingsItemEx;
+  data: PNodeData;
+begin
+  result := SettingsVST.AddChild(aParent);
+  data := SettingsVST.GetNodeData(result);
+  data^.Event    := aEvent;
+  data^.Flags    := aFlags;
+  data^.Settings := aSettings;
+  SettingsVST.ValidateNode(result, false);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TMainForm.BuildModulSettingsTree(aModul: THardwareMonitorModul);
+
+  function GetNode(const aIdent: String): PVirtualNode;
+  var
+    sList: TStringList;
+    child: PVirtualNode;
+    data: PNodeData;
+    i: Integer;
+    found: Boolean;
+    ident: String;
+  begin
+    sList := TStringList.Create;
+    try
+      sList.Delimiter := '/';
+      sList.DelimitedText := aIdent;
+
+      i := 0;
+      result := fModulNode;
+      while i < sList.Count do begin
+        try
+          if Length(ident) > 0 then
+            ident := ident + '/';
+          ident := ident + sList[i];
+          child := SettingsVST.GetFirstChild(result);
+          found := false;
+          while Assigned(child) do begin
+            data := SettingsVST.GetNodeData(child);
+            if Assigned(data) and Assigned(data^.Settings) and
+               (data^.Settings.IdentStr = ident) then begin
+              result := child;
+              found := true;
+              break;
+            end;
+            child := SettingsVST.GetNextSibling(child);
+          end;
+          if not found then
+            result := CreateNode(result, nil, [nfFreeSettings],
+              CreateSettingsItem(ident, sList[i], SETTINGS_FLAG_NONE, dtUnknown, nil));
+        finally
+          inc(i);
+        end;
+      end;
+    finally
+      sList.Free;
+    end;
+  end;
+
+  procedure CreateColorTree(const aNode: PVirtualNode; const aSettingsItem: TSettingsItem);
+  begin
+    with aSettingsItem do begin
+      CreateNode(aNode, @OnChangeSettings, [nfFreeSettings, nfUpdateParent],
+        CreateSettingsItem(IdentStr+'/r', 'rot', SETTINGS_FLAG_NONE, dtByte, Data+2));
+      CreateNode(aNode, @OnChangeSettings, [nfFreeSettings],
+        CreateSettingsItem(IdentStr+'/g', 'grün', SETTINGS_FLAG_NONE, dtByte, Data+1));
+      CreateNode(aNode, @OnChangeSettings, [nfFreeSettings],
+        CreateSettingsItem(IdentStr+'/b', 'blau', SETTINGS_FLAG_NONE, dtByte, Data));
+      CreateNode(aNode, @OnChangeSettings, [nfFreeSettings],
+        CreateSettingsItem(IdentStr+'/a', 'alpha', SETTINGS_FLAG_NONE, dtByte, Data+3));
+    end;
+  end;
+
+var
+  node: PVirtualNode;
+  d: PNodeData;
   i: Integer;
   settings: TSettingsItem;
-
-  //////////////////////////////////////////////////////////////////////////////
-  function InitData(const aNode: PVirtualNode; const aName: String): PSettingsItemEx;
-  begin
-    result := SettingsVST.GetNodeData(aNode);
-    FillChar(result^, SizeOf(result^), 0);
-    result^.i.Name := PChar(aName);
-  end;
-
-  //////////////////////////////////////////////////////////////////////////////
-  procedure InitDataEx(const aNode: PVirtualNode; const aName: String; aDataType: TDataType;
-    const aData: Pointer; const aEvent: TNotifyEvent; const aTag: PtrInt);
-  var
-    d: PSettingsItemEx;
-  begin
-    d := InitData(aNode, aName);
-    d^.i.DataType := aDataType;
-    d^.i.Data := aData;
-    d^.Event  := aEvent;
-    d^.Tag    := aTag;
-  end;
-
-  //////////////////////////////////////////////////////////////////////////////
-  procedure CreateColorNode(const aNode: PVirtualNode);
-  var
-    oldD, newD: PSettingsItemEx;
-    newNode: PVirtualNode;
-  begin
-    oldD := SettingsVST.GetNodeData(aNode);
-    oldD^.Tag := NODE_DATA_UPDATE_CHILDREN;
-    if Assigned(aNode) and Assigned(oldD) then begin
-      InitDataEx(SettingsVST.AddChild(aNode), 'r', dtByte, oldD^.i.Data+2, @OnChangeSettings, NODE_DATA_UPDATE_PARENT);
-      InitDataEx(SettingsVST.AddChild(aNode), 'g', dtByte, oldD^.i.Data+1, @OnChangeSettings, NODE_DATA_UPDATE_PARENT);
-      InitDataEx(SettingsVST.AddChild(aNode), 'b', dtByte, oldD^.i.Data+0, @OnChangeSettings, NODE_DATA_UPDATE_PARENT);
-      InitDataEx(SettingsVST.AddChild(aNode), 'a', dtByte, oldD^.i.Data+3, @OnChangeSettings, NODE_DATA_UPDATE_PARENT);
-    end;
-  end;
-
-  //////////////////////////////////////////////////////////////////////////////
-  procedure CreateFontNode(const aNode: PVirtualNode);
-  var
-    oldD: PSettingsItemEx;
-    n: PVirtualNode;
-  begin
-    oldD := SettingsVST.GetNodeData(aNode);
-    if Assigned(aNode) and Assigned(oldD) then begin
-      InitDataEx(SettingsVST.AddChild(aNode), 'Name', dtString, @PModulFontDataEx(oldD^.i.Data)^.Name, @OnChangeSettings, NODE_DATA_UPDATE_PARENT);
-      n := SettingsVST.AddChild(aNode);
-      InitDataEx(n, 'Farbe', dtColor, @PModulFontDataEx(oldD^.i.Data)^.Color, @OnChangeSettings, NODE_DATA_UPDATE_PARENT);
-      CreateColorNode(n);
-      InitDataEx(SettingsVST.AddChild(aNode), 'Style', dtInt32, @PModulFontDataEx(oldD^.i.Data)^.Style, @OnChangeSettings, NODE_DATA_UPDATE_PARENT);
-      InitDataEx(SettingsVST.AddChild(aNode), 'Größe', dtInt32, @PModulFontDataEx(oldD^.i.Data)^.Size, @OnChangeSettings, NODE_DATA_UPDATE_PARENT);
-    end;
-  end;
-
 begin
   SettingsVST.DeleteChildren(fModulNode);
   if not Assigned(aModul) then
     exit;
 //Position und Größe
-  n1 := SettingsVST.AddChild(fModulNode);
-  InitData(n1, 'Größe');
+  node := CreateNode(fModulNode, @OnChangeModulSizePos, [nfFreeSettings],
+    CreateSettingsItem('size', 'Größe', SETTINGS_FLAG_NONE, dtUnknown, nil));
 //x-Position
-  d := InitData(SettingsVST.AddChild(n1), 'x-Position');
-  d^.i.DataType := dtInt32;
-  d^.i.Data := @aModul.Position.x;
-  d^.Event := @OnChangeModulSizePos;
+  CreateNode(node, @OnChangeModulSizePos, [nfFreeSettings],
+    CreateSettingsItem('size/pos_x', 'x-Position', SETTINGS_FLAG_NONE, dtInt32, @aModul.Position.x));
 //y-Position
-  d := InitData(SettingsVST.AddChild(n1), 'y-Position');
-  d^.i.DataType := dtInt32;
-  d^.i.Data := @aModul.Position.y;
-  d^.Event := @OnChangeModulSizePos;
+  CreateNode(node, @OnChangeModulSizePos, [nfFreeSettings],
+    CreateSettingsItem('size/pos_y', 'y-Position', SETTINGS_FLAG_NONE, dtInt32, @aModul.Position.y));
 //Breite
-  d := InitData(SettingsVST.AddChild(n1), 'Breite');
-  d^.i.DataType := dtInt32;
-  d^.i.Data := @aModul.SmallSize.x;
-  d^.Event := @OnChangeModulSizePos;
+  CreateNode(node, @OnChangeModulSizePos, [nfFreeSettings],
+    CreateSettingsItem('size/width', 'Breite', SETTINGS_FLAG_NONE, dtInt32, @aModul.SmallSize.x));
 //Höhe
-  d := InitData(SettingsVST.AddChild(n1), 'Höhe');
-  d^.i.DataType := dtInt32;
-  d^.i.Data := @aModul.SmallSize.y;
-  d^.Event := @OnChangeModulSizePos;
+  CreateNode(node, @OnChangeModulSizePos, [nfFreeSettings],
+    CreateSettingsItem('size/height', 'Höhe', SETTINGS_FLAG_NONE, dtInt32, @aModul.SmallSize.y));
+
 //ModulSettings
   aModul.GetSettings;
   for i := 0 to aModul.SettingsCount-1 do begin
-    settings := aModul.Settings[i];
-    n1 := SettingsVST.AddChild(fModulNode);
-    d := SettingsVST.GetNodeData(n1);
-    d^.i := settings;
-    d^.Event := @OnChangeSettings;
-    if d^.i.DataType = dtColor then
-      CreateColorNode(n1)
-    else if d^.i.DataType = dtFont then
-      CreateFontNode(n1);
+    node := GetNode(aModul.Settings[i].IdentStr);
+    d := SettingsVST.GetNodeData(node);
+    if Assigned(d) then begin
+      if Assigned(d^.Settings) then
+        FreeAndNil(d^.Settings);
+      d^.Settings := aModul.Settings[i];
+      d^.Flags := [];
+      d^.Event := @OnChangeSettings;
+
+      if (d^.Settings.Flags and SETTINGS_FLAG_COLOR > 0) and
+         (d^.Settings.DataType = dtInt32) then begin
+        CreateColorTree(node, d^.Settings);
+        d^.Flags := d^.Flags + [nfUpdateChildren];
+      end;
+    end;
   end;
   SettingsVST.Expanded[fModulNode] := True;
 end;
@@ -603,46 +625,30 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.FormCreate(Sender: TObject);
 var
-  n: PVirtualNode;
-  d: PSettingsItemEx;
+  node: PVirtualNode;
+  data: PNodeData;
 begin
   StartOpenHardwareMonitor;
 
   fFormatSettings.DecimalSeparator := '.';
   SettingsVST.EditDelay := 100;
-  SettingsVST.NodeDataSize := SizeOf(TSettingsItemEx);
+  SettingsVST.NodeDataSize := SizeOf(TNodeData);
 
-  fBgNode := SettingsVST.AddChild(nil);
-  d := SettingsVST.GetNodeData(fBgNode);
-  FillChar(d^, SizeOf(d^), 0);
-  d^.i.Name := 'Hintergrund';
-  d^.i.DataType := dtPicture;
-  New(PString(d^.i.Data));
-  PString(d^.i.Data)^ := '';
-  d^.Event := @OnChangeBackground;
+  CreateNode(nil, @OnChangeBackground, [nfFreeSettings],
+    CreateSettingsItem('background', 'Hintergrund', SETTINGS_FLAG_PICTURE or SETTINGS_FLAG_DISP_CHANGE,
+      dtString, @fBackgroundPic));
 
-  fStartupNode := SettingsVST.AddChild(nil);
-  d := SettingsVST.GetNodeData(fStartupNode);
-  FillChar(d^, SizeOf(d^), 0);
-  d^.i.Name := 'Startbild';
-  d^.i.DataType := dtPicture;
-  New(PString(d^.i.Data));
-  PString(d^.i.Data)^ := '';
-  d^.Event := @OnChangeStartPic;
+  CreateNode(nil, @OnChangeStartPic, [nfFreeSettings],
+    CreateSettingsItem('startup', 'Startbild', SETTINGS_FLAG_PICTURE or SETTINGS_FLAG_DISP_CHANGE,
+      dtString, @fStartupPic));
 
-  n := SettingsVST.AddChild(nil);
-  d := SettingsVST.GetNodeData(n);
-  FillChar(d^, SizeOf(d^), 0);
-  d^.i.Name := 'Update-Rate';
-  fUpdateRate := 250;
-  d^.i.DataType := dtInt32;
-  d^.i.Data := @fUpdateRate;
-  d^.Event := @OnChangeUpdateRate;
+  CreateNode(nil, @OnChangeUpdateRate, [nfFreeSettings],
+    CreateSettingsItem('update_rate', 'Update-Rate', SETTINGS_FLAG_NONE,
+      dtInt32, @fUpdateRate));
 
-  fModulNode := SettingsVST.AddChild(nil);
-  d := SettingsVST.GetNodeData(fModulNode);
-  FillChar(d^, SizeOf(d^), 0);
-  d^.i.Name := 'Modul';
+  fModulNode := CreateNode(nil, @OnChangeStartPic, [nfFreeSettings],
+    CreateSettingsItem('modul_settings', 'Modul Einstellungen', SETTINGS_FLAG_NONE,
+      dtUnknown, nil));
 
   fDisplays := TDisplays.Create;
   fModules := TModulesInfo.Create;
@@ -654,12 +660,6 @@ begin
 
   UpdateDisplaysCLB;
   UpdateModulesLB;
-end;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-procedure TMainForm.Button1Click(Sender: TObject);
-begin
-  SensorForm.ShowModal;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -957,6 +957,7 @@ begin
     end;
   finally
     mcf.Free;
+    SetActiveModul(fActiveModulID);
   end;
 end;
 
@@ -964,93 +965,155 @@ end;
 procedure TMainForm.SettingsVSTDblClick(Sender: TObject);
 var
   n: PVirtualNode;
-  d: PSettingsItemEx;
+  d: PNodeData;
+
+  procedure ChangeFont;
+  var
+    pName: PString;
+    pSize: PSingle;
+    pStyle, pColor: PInteger;
+    child: PVirtualNode;
+    childData: PNodeData;
+    baseIdent: String;
+  begin
+    child := SettingsVST.GetFirstChild(n);
+    baseIdent := '';
+    if Assigned(d) and Assigned(d^.Settings) then
+      baseIdent := d^.Settings.IdentStr;
+
+    pName  := nil;
+    pSize  := nil;
+    pStyle := nil;
+    pColor := nil;
+    while Assigned(child) do begin
+      childData := SettingsVST.GetNodeData(child);
+      if Assigned(childData) and Assigned(childData^.Settings) then
+        with childData^.Settings do begin
+          if (IdentStr = baseIdent+'/name') and (DataType = dtString) then
+            pName := Data;
+          if (IdentStr = baseIdent+'/size') and (DataType = dtFloat32) then
+            pSize := Data;
+          if (IdentStr = baseIdent+'/style') and (DataType = dtInt32) then
+            pStyle := Data;
+          if (IdentStr = baseIdent+'/color') and (DataType = dtInt32) then
+            pColor := Data;
+        end;
+      child := SettingsVST.GetNextSibling(child);
+    end;
+    with FontDialog.Font do begin
+      if Assigned(pName) then
+        Name := pName^;
+      if Assigned(pSize) then
+        Size := Round(pSize^);
+      FontDialog.Font.Style := [];
+      if Assigned(pStyle) then begin
+        if ((pStyle^ and Integer(FontStyleBold)) > 0) then
+          FontDialog.Font.Style := FontDialog.Font.Style + [fsBold];
+        if ((pStyle^ and Integer(FontStyleItalic)) > 0) then
+          FontDialog.Font.Style := FontDialog.Font.Style + [fsItalic];
+        if ((pStyle^ and Integer(FontStyleStrikeout)) > 0) then
+          FontDialog.Font.Style := FontDialog.Font.Style + [fsStrikeOut];
+        if ((pStyle^ and Integer(FontStyleUnderline)) > 0) then
+          FontDialog.Font.Style := FontDialog.Font.Style + [fsUnderline];
+      end;
+      if Assigned(pColor) then begin
+        Color :=
+          ((pColor^ shr  16) and $FF) or
+          ((pColor^ and $FF) shl  16) or
+          ( pColor^ and $FF00);
+      end else
+        Color := clBlack;
+      if FontDialog.Execute then  begin
+        if Assigned(pName) then
+          pName^ := Name;
+        if Assigned(pSize) then
+          pSize^ := Size;
+        if Assigned(pStyle) then begin
+          pStyle^ := 0;
+          if fsBold in Style then
+            pStyle^ := pStyle^ or Integer(FontStyleBold);
+          if fsItalic in Style then
+            pStyle^ := pStyle^ or Integer(FontStyleItalic);
+          if fsStrikeOut in Style then
+            pStyle^ := pStyle^ or Integer(FontStyleStrikeout);
+          if fsUnderline in Style then
+            pStyle^ := pStyle^ or Integer(FontStyleUnderline);
+        end;
+        if Assigned(pColor) then
+          pColor^ :=
+            (pColor^ and $FF000000) or
+            ((Color shr  16) and $FF) or
+            ((Color and $FF) shl  16) or
+            ( Color and $FF00);
+        if Assigned(d^.Event) then
+          d^.Event(self);
+      end;
+    end;
+  end;
+
 begin
   n := SettingsVST.FocusedNode;
   if Assigned(n) then begin
     d := SettingsVST.GetNodeData(n);
-    if Assigned(d) and Assigned(d^.i.Data) then begin
-      case d^.i.DataType of
-        dtFont: begin
-          FontDialog.Font.Style := [];
-          if ((PModulFontDataEx(d^.i.Data)^.Style and Integer(FontStyleBold)) > 0) then
-            FontDialog.Font.Style := FontDialog.Font.Style + [fsBold];
-          if ((PModulFontDataEx(d^.i.Data)^.Style and Integer(FontStyleItalic)) > 0) then
-            FontDialog.Font.Style := FontDialog.Font.Style + [fsItalic];
-          if ((PModulFontDataEx(d^.i.Data)^.Style and Integer(FontStyleStrikeout)) > 0) then
-            FontDialog.Font.Style := FontDialog.Font.Style + [fsStrikeOut];
-          if ((PModulFontDataEx(d^.i.Data)^.Style and Integer(FontStyleUnderline)) > 0) then
-            FontDialog.Font.Style := FontDialog.Font.Style + [fsUnderline];
-          FontDialog.Font.Name  := PModulFontDataEx(d^.i.Data)^.Name;
-          FontDialog.Font.Size  := PModulFontDataEx(d^.i.Data)^.Size;
-          FontDialog.Font.Color :=
-              ((PModulFontDataEx(d^.i.Data)^.Color shr  16) and $FF) or
-              ((PModulFontDataEx(d^.i.Data)^.Color and $FF) shl  16) or
-              ( PModulFontDataEx(d^.i.Data)^.Color and $FF00);
-          if FontDialog.Execute then begin
-            PModulFontDataEx(d^.i.Data)^.Name  := FontDialog.Font.Name;
-            PModulFontDataEx(d^.i.Data)^.Style := 0;
-            if fsBold in FontDialog.Font.Style then
-              PModulFontDataEx(d^.i.Data)^.Style := PModulFontDataEx(d^.i.Data)^.Style or Integer(FontStyleBold);
-            if fsItalic in FontDialog.Font.Style then
-              PModulFontDataEx(d^.i.Data)^.Style := PModulFontDataEx(d^.i.Data)^.Style or Integer(FontStyleItalic);
-            if fsStrikeOut in FontDialog.Font.Style then
-              PModulFontDataEx(d^.i.Data)^.Style := PModulFontDataEx(d^.i.Data)^.Style or Integer(FontStyleStrikeout);
-            if fsUnderline in FontDialog.Font.Style then
-              PModulFontDataEx(d^.i.Data)^.Style := PModulFontDataEx(d^.i.Data)^.Style or Integer(FontStyleUnderline);
-            PModulFontDataEx(d^.i.Data)^.Size := FontDialog.Font.Size;
-            PModulFontDataEx(d^.i.Data)^.Color :=
-              (PModulFontDataEx(d^.i.Data)^.Color and $FF000000) or
-              ((FontDialog.Font.Color shr  16) and $FF) or
-              ((FontDialog.Font.Color and $FF) shl  16) or
-              ( FontDialog.Font.Color and $FF00);
-            if Assigned(d^.Event) then
-              d^.Event(self);
+    if Assigned(d) and Assigned(d^.Settings) then with (d^.Settings) do begin
+      case DataType of
+        dtUnknown: begin
+          if (SETTINGS_FLAG_FONT_DATA and Flags > 0) then begin
+            ChangeFont;
           end;
         end;
-        dtFile: begin
-          if OpenDialog.Execute then begin
-            PString(d^.i.Data)^ := OpenDialog.FileName;
-            if Assigned(d^.Event) then
-              d^.Event(self);
+        dtString: if Assigned(Data) then begin
+        //Picture Dialog
+          if (SETTINGS_FLAG_PICTURE and Flags > 0) then begin
+            if OpenDialog.Execute then begin
+              PString(Data)^ := OpenDialog.FileName;
+              if Assigned(d^.Event) then
+                d^.Event(self);
+            end;
+        //File Dialog
+          end else if (SETTINGS_FLAG_FILE and Flags > 0) then begin
+            if OpenPicDialog.Execute then begin
+              PString(Data)^ := OpenPicDialog.FileName;
+              if Assigned(d^.Event) then
+                d^.Event(self);
+            end;
+        //Sensor Dialog
+          end else if (SETTINGS_FLAG_IDENT_STR and Flags > 0) then begin
+            if SensorForm.ShowModal = mrOK then begin
+              PString(Data)^ := SensorForm.IdentStr;
+              if Assigned(d^.Event) then
+                d^.Event(self);
+            end;
+        //normal String
+          end else begin
+            if n^.ChildCount <= 0 then
+              SettingsVST.EditNode(n, 1);
           end;
         end;
-        dtPicture: begin
-          if OpenPicDialog.Execute then begin
-            PString(d^.i.Data)^ := OpenPicDialog.FileName;
-            if Assigned(d^.Event) then
-              d^.Event(self);
-          end;
+        dtInt32: if Assigned(Data) then begin
+          if (Flags and SETTINGS_FLAG_COLOR > 0) then begin
+            if ColorForm.ShowModalColor(PCardinal(Data)^) = mrOK then begin
+              PCardinal(Data)^ := ColorForm.Color.c;
+              if Assigned(d^.Event) then
+                d^.Event(self);
+            end;
+          end else if n^.ChildCount <= 0 then
+            SettingsVST.EditNode(n, 1);
         end;
-        dtIdentStr: begin
-          if SensorForm.ShowModal = mrOK then begin
-            Pstring(d^.i.Data)^ := SensorForm.IdentStr;
-            if Assigned(d^.Event) then
-              d^.Event(self);
-          end;
-        end;
-        dtColor: begin
-          if (ColorForm.ShowModalColor(PCardinal(d^.i.Data)^) = mrOK) then begin
-            PCardinal(d^.i.Data)^ := ColorForm.Color.c;
-            if Assigned(d^.Event) then
-              d^.Event(self);
-          end;
-        end;
-        dtBool: begin
-          System.PBoolean(d^.i.Data)^ := not System.PBoolean(d^.i.Data)^;
+        dtBool: if Assigned(Data) then begin
+          System.PBoolean(Data)^ := not System.PBoolean(Data)^;
           if Assigned(d^.Event) then
             d^.Event(self);
-        end
+        end;
       else
         if n^.ChildCount <= 0 then
           SettingsVST.EditNode(n, 1);
       end;
-      case d^.Tag of
-        NODE_DATA_UPDATE_PARENT:
-          SettingsVST.RepaintNode(n^.Parent);
-        NODE_DATA_UPDATE_CHILDREN:
-          RepaintNodes(n);
-      end;
+
+      if (nfUpdateChildren in d^.Flags) then
+        RepaintNodes(n);
+      if (nfUpdateParent in d^.Flags) then
+        SettingsVST.RepaintNode(n^.Parent);
     end;
   end;
 end;
@@ -1070,74 +1133,69 @@ end;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.SettingsVSTEditing(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
 var
-  d: PSettingsItemEx;
+  d: PNodeData;
 begin
   d := SettingsVST.GetNodeData(Node);
   Allowed := Assigned(Node) and (SettingsVST.ChildCount[Node] <= 0) and
-    Assigned(d) and Assigned(d^.i.Data) and (Column = 1);
+    Assigned(d) and Assigned(d^.Settings) and Assigned(d^.Settings.Data) and (Column = 1);
   fIsEditing := Allowed;
 end;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.SettingsVSTFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
 var
-  d: PSettingsItemEx;
+  d: PNodeData;
 begin
   d := SettingsVST.GetNodeData(Node);
   if Assigned(d) then begin
-    d^.i.Name := '';
-    if (Node = fBgNode) or (Node = fStartupNode) then
-      Dispose(PString(d^.i.Data));
+    if (nfFreeSettings in d^.Flags) then
+      FreeAndNil(d^.Settings);
   end;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.SettingsVSTGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: String);
 var
-  d: PSettingsItemEx;
+  d: PNodeData;
 begin
   CellText := '';
   d := SettingsVST.GetNodeData(Node);
-  if Assigned(d) then begin
+  if Assigned(d) and Assigned(d^.Settings) then begin
     case Column of
-      0: CellText := d^.i.Name;
+      0: CellText := d^.Settings.DisplayStr;
       1: begin
-        case d^.i.DataType of
-          dtFile, dtPicture:
-            if (Node = fBgNode) or (Node = fStartupNode) then
-              CellText := '[ändern]'
-            else if Assigned(d^.i.Data) and (PString(d^.i.Data)^ <> '') then
-              CellText := MiniMizeName(PString(d^.i.Data)^, SettingsVST.Canvas, SettingsVST.Header.Columns[1].Width)
-            else
-              CellText := '[leer]';
-          dtString, dtIdentStr:
-            if Assigned(d^.i.Data) then
-              CellText := PString(d^.i.Data)^
-            else
-              CellText := '[leer]';
-          dtBool:
-            if Assigned(d^.i.Data) and System.PBoolean(d^.i.Data)^ then
-              CellText := 'true'
-            else
-              CellText := 'false';
-          dtInt32:
-            if Assigned(d^.i.Data) then
-              CellText := IntToStr(PInteger(d^.i.Data)^);
-          dtFloat32:
-            if Assigned(d^.i.Data) then
-              CellText := ToStr(PSingle(d^.i.Data)^, -3);
-          dtColor:
-            if Assigned(d^.i.Data) then
-              CellText := IntToHex(PCardinal(d^.i.Data)^, 8);
-          dtByte:
-            if Assigned(d^.i.Data) then
-              CellText := IntToStr(PByte(d^.i.Data)^);
-        else
-          CellText := '';
+        if Assigned(d^.Settings.Data) then with (d^.Settings) do begin
+          if (Flags and SETTINGS_FLAG_DISP_CHANGE > 0) then
+            CellText := '[ändern]'
+          else
+            case DataType of
+              dtInt32: begin
+                if (Flags and (SETTINGS_FLAG_COLOR or SETTINGS_FLAG_HEX) > 0) then
+                  CellText := IntToHex(PCardinal(Data)^, 8)
+                else
+                  CellText := IntToStr(PInteger(Data)^);
+              end;
+              dtByte: begin
+                if (Flags and (SETTINGS_FLAG_COLOR or SETTINGS_FLAG_HEX) > 0) then
+                  CellText := IntToHex(PByte(Data)^, 8)
+                else
+                  CellText := IntToStr(PByte(Data)^);
+              end;
+              dtFloat32: begin
+                CellText := ToStr(PSingle(Data)^, -3);
+              end;
+              dtBool: begin
+                if System.PBoolean(Data)^ then
+                  CellText := 'true'
+                else
+                  CellText := 'false';
+              end;
+              dtString: begin
+                CellText := PString(Data)^;
+              end;
+            end;
         end;
-      end
-    else
-      CellText := '';
+      end;
     end;
   end;
 end;
@@ -1145,64 +1203,58 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.SettingsVSTNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; const NewText: String);
 var
-  d: PSettingsItemEx;
+  d: PNodeData;
   i: Integer;
+  f: Single;
+  callEvent: Boolean;
 begin
   d := SettingsVST.GetNodeData(Node);
-  if Assigned(d) and Assigned(d^.i.Data) then begin
-    case d^.i.DataType of
-      dtInt32: begin
-        if not TryStrToInt(NewText, PInteger(d^.i.Data)^) then
-          MessageDlg('Error', Format('''%s'' ist keine gültige Zahl!', [NewText]), mtError, [mbOK], 0)
-        else begin
-          if (d^.i.Min <> 0) or (d^.i.Max <> 0) then begin
-            if (i < d^.i.Min) then
-              i := Trunc(d^.i.Min);
-            if (i > d^.i.Max) then
-              i := Trunc(d^.i.Max);
-          end;
-          if Assigned(d^.Event) then
-            d^.Event(self);
+  if Assigned(d) and Assigned(d^.Settings) and Assigned(d^.Settings.Data) then begin
+    callEvent := false;
+    with d^.Settings do begin
+      case DataType of
+        dtString: begin
+          PString(Data)^ := NewText;
+          callEvent := true;
         end;
-      end;
-      dtByte: begin
-        if not TryStrToInt(NewText, i) then
-          MessageDlg('Error', Format('''%s'' ist keine gültige Zahl!', [NewText]), mtError, [mbOK], 0)
-        else begin
-          if (i < 0) then
-            i := 0;
-          if (i > 255) then
-            i := 255;
-          if (d^.i.Min <> 0) or (d^.i.Max <> 0) then begin
-            if (i < d^.i.Min) then
-              i := Trunc(d^.i.Min);
-            if (i > d^.i.Max) then
-              i := Trunc(d^.i.Max);
+        dtInt32, dtByte: begin
+          if (Flags and (SETTINGS_FLAG_COLOR or SETTINGS_FLAG_HEX) > 0) then
+            callEvent := TryHexToInt(NewText, Cardinal(i))
+          else
+            callEvent := TryStrToInt(NewText, i);
+          if not callEvent then begin
+            MessageDlg('Error', Format('''%s'' ist keine gültige Zahl!', [NewText]), mtError, [mbOK], 0)
+          end else begin
+            case DataType of
+              dtInt32:
+                PInteger(Data)^ := i;
+              dtByte: begin
+                if i > 255 then
+                  i := 255;
+                if i < 0 then
+                  i := 0;
+                PByte(Data)^ := i;
+              end;
+            end;
           end;
-          PByte(d^.i.Data)^ := i;
-          if Assigned(d^.Event) then
-            d^.Event(self);
         end;
-      end;
-      dtFloat32: begin
-        if not TryStrToFloat(StringReplace(NewText, ',', '.', [rfIgnoreCase, rfReplaceAll]), PSingle(d^.i.Data)^, fFormatSettings) then
-          MessageDlg('Error', Format('''%s'' ist keine gültige Fließkommazahl!', [NewText]), mtError, [mbOK], 0)
-        else if Assigned(d^.Event) then
-          d^.Event(self);
-      end;
-      dtString: begin
-        PString(d^.i.Data)^ := NewText;
-        if Assigned(d^.Event) then
-          d^.Event(self);
+        dtFloat32: begin
+          callEvent := TryStrToFloat(StringReplace(NewText, ',', '.', [rfIgnoreCase, rfReplaceAll]), f, fFormatSettings);
+          if not callEvent then begin
+            MessageDlg('Error', Format('''%s'' ist keine gültige Fließkommazahl!', [NewText]), mtError, [mbOK], 0)
+          end else begin
+            PSingle(Data)^ := f
+          end;
+        end;
       end;
     end;
+    if callEvent and Assigned(d^.Event) then
+      d^.Event(self);
 
-    case d^.Tag of
-      NODE_DATA_UPDATE_CHILDREN:
+    if (nfUpdateChildren in d^.Flags) then
         RepaintNodes(Node);
-      NODE_DATA_UPDATE_PARENT:
-        SettingsVST.RepaintNode(Node^.Parent);
-    end;
+    if (nfUpdateParent in d^.Flags) then
+      SettingsVST.RepaintNode(Node^.Parent);
   end;
 end;
 
