@@ -29,7 +29,7 @@ type
     constructor Create;
   end;
 
-  TSensorType = (stLoad, stTemp, stClock, stVolt, stFan);
+  TSensorType = (stUnknown = 0, stLoad, stTemp, stClock, stVolt, stFan);
   TSensorData = packed record
     UpdateAll: Boolean;
     Ident: String;

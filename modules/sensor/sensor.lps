@@ -9,11 +9,10 @@
         <Filename Value="sensor.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="sensor"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="47"/>
-        <CursorPos X="18" Y="65"/>
+        <TopLine Value="29"/>
+        <CursorPos X="28" Y="61"/>
         <UsageCount Value="35"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -21,10 +20,11 @@
         <Filename Value="uSensor.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uSensor"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="207"/>
-        <CursorPos X="39" Y="229"/>
+        <TopLine Value="103"/>
+        <CursorPos X="77" Y="141"/>
         <UsageCount Value="35"/>
         <Loaded Value="True"/>
       </Unit1>

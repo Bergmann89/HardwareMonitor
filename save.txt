@@ -420,7 +420,7 @@ Modules:
       color = -16777217;
       background_color = 0;
       linechart = 1;
-      drawchart = 1;
+      drawchart = 0;
       font/name = Arial;
       font/size = 10;
       font/style = 1;
