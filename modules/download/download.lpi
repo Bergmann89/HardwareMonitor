@@ -279,6 +279,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <GenerateDebugInfo Value="False"/>
         <UseHeaptrc Value="True"/>
       </Debugging>
       <Options>

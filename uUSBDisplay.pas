@@ -193,10 +193,10 @@ end;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TUSBDisplay.Update;
 begin
-  if fDisplayID < 0 then
-    exit;
-  BitmapTo565(self, fBuffer);
-  USBD480_DrawFullScreen(@fDisplayInfo, @fBuffer[0]);
+  if fDisplayID >= 0 then begin
+    BitmapTo565(self, fBuffer);
+    USBD480_DrawFullScreen(@fDisplayInfo, @fBuffer[0]);
+  end;
   if Assigned(fOnUpdate) then
     fOnUpdate(self);
 end;
