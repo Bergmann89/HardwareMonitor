@@ -12,8 +12,16 @@ uses
 
 {$R *.res}
 
+var
+  i: Integer;
+const
+  SILENT_PARAM = '-silent';
+
 begin
   Application.Initialize;
+  for i := 1 to ParamCount do
+    if ParamStr(i) = SILENT_PARAM then
+      Application.ShowMainForm := false;
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TColorForm, ColorForm);
   Application.CreateForm(TSensorForm, SensorForm);

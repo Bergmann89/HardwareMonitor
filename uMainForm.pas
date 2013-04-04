@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, CheckLst, ExtDlgs, VirtualTrees, uHardwareMonitor, uModulAPI,
+  StdCtrls, CheckLst, ExtDlgs, Menus, VirtualTrees, uHardwareMonitor, uModulAPI,
   uMCF;
 
 type
@@ -17,6 +17,9 @@ type
 
   TMainForm = class(TForm)
     AddModulBt: TButton;
+    ExitMI: TMenuItem;
+    OpenMI: TMenuItem;
+    TrayPM: TPopupMenu;
     SaveDialog: TSaveDialog;
     SaveSettingsBt: TButton;
     LoadSettingsBt: TButton;
@@ -57,12 +60,14 @@ type
     PreviewPB: TPaintBox;
     SettingsGroup: TGroupBox;
     SettingsVST: TVirtualStringTree;
+    TrayIcon: TTrayIcon;
     procedure ActiveModulesLBClick(Sender: TObject);
     procedure ActiveModulesLBDblClick(Sender: TObject);
     procedure AddModulBtClick(Sender: TObject);
     procedure DelModulBtClick(Sender: TObject);
     procedure DisplaysCLBClick(Sender: TObject);
     procedure DisplaysCLBClickCheck(Sender: TObject);
+    procedure ExitMIClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -70,6 +75,7 @@ type
     procedure LoadSettingsBtClick(Sender: TObject);
     procedure ModMailLabClick(Sender: TObject);
     procedure ModulesLBClick(Sender: TObject);
+    procedure OpenMIClick(Sender: TObject);
     procedure PreviewPBDblClick(Sender: TObject);
     procedure PreviewPBMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure PreviewPBMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
@@ -83,6 +89,7 @@ type
     procedure SettingsVSTFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure SettingsVSTGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: String);
     procedure SettingsVSTNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; const NewText: String);
+    procedure TrayIconDblClick(Sender: TObject);
   private
     fModules: TModulesInfo;
     fDisplays: TDisplays;
@@ -98,6 +105,7 @@ type
     fStartupPic: String;
     fUpdateRate: Integer;
     fModulNode: PVirtualNode;
+    fClose: Boolean;
 
     procedure OnChangeModulSizePos(Sender: TObject);
     procedure OnChangeBackground(Sender: TObject);
@@ -112,6 +120,7 @@ type
     procedure UpdateModulesLB;
     procedure UpdateActiveModulesLB;
     procedure UpdateDisplaysCLB;
+    procedure HandleParameters;
     procedure RepaintNodes(const aNode: PVirtualNode);
     procedure LoadModulInfo(const ID: Integer);
     procedure SaveModulData(const ID: Integer);
@@ -379,6 +388,53 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TMainForm.HandleParameters;
+
+  procedure LoadDisplaySettings(const aParamID: Integer; const aMonitor: THardwareMonitor);
+  var
+    filename: String;
+    mcf: TmcfFile;
+  begin
+    filename := ParamStr(aParamID);
+    if not Assigned(aMonitor) or not FileExists(filename) then
+      exit;
+    mcf := TmcfFile.Create;
+    try
+      mcf.LoadFromFile(filename);
+      aMonitor.LoadFromFile(mcf, fModules);
+    finally
+      mcf.Free;
+    end;
+  end;
+
+  procedure ActivateDisplay(const aParamID: Integer);
+  var
+    i: Integer;
+    s, dName: String;
+  begin
+    s := ParamStr(aParamID);
+    for i := 0 to fDisplays.Count-1 do begin
+      dName := fDisplays.Display[i].Name;
+      if (dName = s) then begin
+        LoadDisplaySettings(aParamID+1,
+          fDisplays.ActivateHardwareMonitor(i));
+        exit;
+      end;
+    end;
+  end;
+
+var
+  i: Integer;
+const
+  PARAM_LOAD_CONFIG = '-load';
+begin
+  for i := 1 to ParamCount do begin
+    if (ParamStr(i) = PARAM_LOAD_CONFIG) then
+      ActivateDisplay(i+1);
+  end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.RepaintNodes(const aNode: PVirtualNode);
 var
   n: PVirtualNode;
@@ -630,6 +686,7 @@ var
 begin
   StartOpenHardwareMonitor;
 
+  fClose := false;
   fFormatSettings.DecimalSeparator := '.';
   SettingsVST.EditDelay := 100;
   SettingsVST.NodeDataSize := SizeOf(TNodeData);
@@ -658,6 +715,7 @@ begin
   fActiveModul   := nil;
   fActiveModulID := -1;
 
+  HandleParameters;
   UpdateDisplaysCLB;
   UpdateModulesLB;
 end;
@@ -731,9 +789,21 @@ begin
     end;
 end;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TMainForm.ExitMIClick(Sender: TObject);
+begin
+  fClose := true;
+  Close;
+  fClose := false;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-
+  if fClose then
+    CloseAction := caFree
+  else
+    CloseAction := caHide;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -805,6 +875,12 @@ end;
 procedure TMainForm.ModulesLBClick(Sender: TObject);
 begin
   LoadModulInfo(ModulesLB.ItemIndex);
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TMainForm.OpenMIClick(Sender: TObject);
+begin
+  Show;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1256,6 +1332,12 @@ begin
     if (nfUpdateParent in d^.Flags) then
       SettingsVST.RepaintNode(Node^.Parent);
   end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+procedure TMainForm.TrayIconDblClick(Sender: TObject);
+begin
+  Show;
 end;
 
 end.

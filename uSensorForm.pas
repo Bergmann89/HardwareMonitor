@@ -166,7 +166,7 @@ begin
           CellText := data^.Name
         else begin
           if (dtLoad in data^.Typ) then
-            CellText := 'Auslatung'
+            CellText := 'Auslastung'
           else if (dtVolt in data^.Typ) then
             CellText := 'Spannung'
           else if (dtTemp in data^.Typ) then

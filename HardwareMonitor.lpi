@@ -27,6 +27,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="-load &quot;Dummy Display&quot; &quot;test&quot;"/>
       </local>
     </RunParams>
     <RequiredPackages Count="2">
@@ -38,15 +39,17 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="57">
+    <Units Count="58">
       <Unit0>
         <Filename Value="HardwareMonitor.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="HardwareMonitor"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="53" Y="18"/>
-        <UsageCount Value="116"/>
+        <CursorPos X="55" Y="11"/>
+        <UsageCount Value="118"/>
+        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="uMainForm.pas"/>
@@ -58,9 +61,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="272"/>
-        <CursorPos X="60" Y="288"/>
-        <UsageCount Value="116"/>
+        <TopLine Value="366"/>
+        <CursorPos X="45" Y="384"/>
+        <UsageCount Value="118"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -71,36 +74,39 @@
         <WindowIndex Value="0"/>
         <TopLine Value="122"/>
         <CursorPos X="3" Y="128"/>
-        <UsageCount Value="116"/>
+        <UsageCount Value="118"/>
       </Unit2>
       <Unit3>
         <Filename Value="uUSBDisplay.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uUSBDisplay"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="172"/>
         <CursorPos X="13" Y="200"/>
-        <UsageCount Value="116"/>
+        <UsageCount Value="118"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="uUSBD480_API.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uUSBD480_API"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
         <TopLine Value="10"/>
-        <CursorPos X="49" Y="21"/>
-        <UsageCount Value="116"/>
+        <CursorPos X="5" Y="26"/>
+        <UsageCount Value="118"/>
+        <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="uHardwareMonitor.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uHardwareMonitor"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1701"/>
-        <CursorPos X="18" Y="1717"/>
-        <UsageCount Value="116"/>
+        <TopLine Value="1926"/>
+        <CursorPos X="1" Y="1946"/>
+        <UsageCount Value="118"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -180,11 +186,11 @@
         <Filename Value="uModulAPI.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uModulAPI"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="158"/>
         <CursorPos X="12" Y="176"/>
-        <UsageCount Value="107"/>
+        <UsageCount Value="109"/>
         <Loaded Value="True"/>
       </Unit16>
       <Unit17>
@@ -227,15 +233,17 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="3" Y="12"/>
-        <UsageCount Value="93"/>
+        <UsageCount Value="95"/>
       </Unit21>
       <Unit22>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="592"/>
-        <CursorPos X="14" Y="607"/>
-        <UsageCount Value="6"/>
+        <TopLine Value="52"/>
+        <CursorPos X="33" Y="70"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
       </Unit22>
       <Unit23>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\comctrls.pp"/>
@@ -247,11 +255,11 @@
       </Unit23>
       <Unit24>
         <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\interfaces\win32\win32callback.inc"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1084"/>
         <CursorPos X="1" Y="1099"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit24>
       <Unit25>
@@ -306,10 +314,12 @@
       <Unit32>
         <Filename Value="uMCF.pas"/>
         <UnitName Value="uMCF"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="199"/>
-        <CursorPos X="3" Y="202"/>
+        <TopLine Value="750"/>
+        <CursorPos X="1" Y="776"/>
         <UsageCount Value="11"/>
+        <Loaded Value="True"/>
       </Unit32>
       <Unit33>
         <Filename Value="modules\download\uDownload.pas"/>
@@ -353,11 +363,11 @@
       <Unit38>
         <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.6.1\source\rtl\objpas\fgl.pp"/>
         <UnitName Value="fgl"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="32"/>
         <CursorPos X="14" Y="32"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit38>
       <Unit39>
@@ -468,12 +478,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uSensorForm"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="317"/>
-        <CursorPos X="25" Y="339"/>
-        <UsageCount Value="42"/>
+        <TopLine Value="141"/>
+        <CursorPos X="32" Y="169"/>
+        <UsageCount Value="44"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit53>
       <Unit54>
         <Filename Value="modules\sensor\uSensor.pas"/>
@@ -486,11 +497,11 @@
       <Unit55>
         <Filename Value="modules\sensor\sensor.lpr"/>
         <UnitName Value="sensor"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="64"/>
         <CursorPos X="1" Y="93"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit55>
       <Unit56>
@@ -500,127 +511,137 @@
         <CursorPos X="2" Y="264"/>
         <UsageCount Value="9"/>
       </Unit56>
+      <Unit57>
+        <Filename Value="C:\Zusatzprogramme\Lazarus\fpc\2.7.1\source\rtl\objpas\objpas.pp"/>
+        <UnitName Value="objpas"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="216"/>
+        <CursorPos X="1" Y="222"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit57>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1959" Column="64" TopLine="1948"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="399" Column="1" TopLine="380"/>
       </Position1>
       <Position2>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1951" Column="1" TopLine="1944"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="401" Column="1" TopLine="380"/>
       </Position2>
       <Position3>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1954" Column="1" TopLine="1944"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="402" Column="1" TopLine="380"/>
       </Position3>
       <Position4>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="322" Column="18" TopLine="320"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="403" Column="1" TopLine="380"/>
       </Position4>
       <Position5>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1951" Column="1" TopLine="1934"/>
+        <Filename Value="uMCF.pas"/>
+        <Caret Line="766" Column="1" TopLine="750"/>
       </Position5>
       <Position6>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="322" Column="3" TopLine="317"/>
+        <Filename Value="uMCF.pas"/>
+        <Caret Line="767" Column="1" TopLine="750"/>
       </Position6>
       <Position7>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="313" Column="1" TopLine="306"/>
+        <Filename Value="uMCF.pas"/>
+        <Caret Line="770" Column="1" TopLine="750"/>
       </Position7>
       <Position8>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="314" Column="1" TopLine="306"/>
+        <Filename Value="uMCF.pas"/>
+        <Caret Line="771" Column="1" TopLine="750"/>
       </Position8>
       <Position9>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1717" Column="1" TopLine="1700"/>
+        <Filename Value="uMCF.pas"/>
+        <Caret Line="772" Column="1" TopLine="750"/>
       </Position9>
       <Position10>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1852" Column="1" TopLine="1844"/>
+        <Filename Value="uMCF.pas"/>
+        <Caret Line="774" Column="1" TopLine="750"/>
       </Position10>
       <Position11>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1853" Column="1" TopLine="1844"/>
+        <Filename Value="uMCF.pas"/>
+        <Caret Line="776" Column="1" TopLine="750"/>
       </Position11>
       <Position12>
-        <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1861" Column="63" TopLine="1844"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="404" Column="1" TopLine="380"/>
       </Position12>
       <Position13>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="313" Column="28" TopLine="305"/>
+        <Caret Line="1929" Column="1" TopLine="1914"/>
       </Position13>
       <Position14>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1717" Column="17" TopLine="1700"/>
+        <Caret Line="1931" Column="1" TopLine="1914"/>
       </Position14>
       <Position15>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1718" Column="1" TopLine="1700"/>
+        <Caret Line="1932" Column="1" TopLine="1914"/>
       </Position15>
       <Position16>
-        <Filename Value="uUSBDisplay.pas"/>
-        <Caret Line="196" Column="1" TopLine="179"/>
+        <Filename Value="uHardwareMonitor.pas"/>
+        <Caret Line="1933" Column="1" TopLine="1914"/>
       </Position16>
       <Position17>
-        <Filename Value="uUSBDisplay.pas"/>
-        <Caret Line="202" Column="1" TopLine="179"/>
+        <Filename Value="uHardwareMonitor.pas"/>
+        <Caret Line="1934" Column="1" TopLine="1917"/>
       </Position17>
       <Position18>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="1719" Column="1" TopLine="1700"/>
+        <Caret Line="1935" Column="1" TopLine="1926"/>
       </Position18>
       <Position19>
         <Filename Value="uHardwareMonitor.pas"/>
-        <Caret Line="315" Column="1" TopLine="298"/>
+        <Caret Line="1936" Column="1" TopLine="1926"/>
       </Position19>
       <Position20>
-        <Filename Value="C:\Zusatzprogramme\Lazarus\lcl\interfaces\win32\win32callback.inc"/>
-        <Caret Line="1099" Column="1" TopLine="1084"/>
+        <Filename Value="uHardwareMonitor.pas"/>
+        <Caret Line="1937" Column="1" TopLine="1926"/>
       </Position20>
       <Position21>
-        <Filename Value="uMainForm.pas"/>
-        <Caret Line="33" Column="30" TopLine="29"/>
+        <Filename Value="uHardwareMonitor.pas"/>
+        <Caret Line="1938" Column="1" TopLine="1926"/>
       </Position21>
       <Position22>
-        <Filename Value="uMainForm.pas"/>
-        <Caret Line="115" Column="25" TopLine="87"/>
+        <Filename Value="uHardwareMonitor.pas"/>
+        <Caret Line="1939" Column="1" TopLine="1926"/>
       </Position22>
       <Position23>
-        <Filename Value="uMainForm.pas"/>
-        <Caret Line="109" Column="28" TopLine="98"/>
+        <Filename Value="uHardwareMonitor.pas"/>
+        <Caret Line="1940" Column="1" TopLine="1926"/>
       </Position23>
       <Position24>
-        <Filename Value="uMainForm.pas"/>
-        <Caret Line="122" Column="36" TopLine="98"/>
+        <Filename Value="uHardwareMonitor.pas"/>
+        <Caret Line="1945" Column="1" TopLine="1926"/>
       </Position24>
       <Position25>
-        <Filename Value="uMainForm.pas"/>
-        <Caret Line="280" Column="34" TopLine="252"/>
+        <Filename Value="uHardwareMonitor.pas"/>
+        <Caret Line="1946" Column="1" TopLine="1926"/>
       </Position25>
       <Position26>
         <Filename Value="uMainForm.pas"/>
-        <Caret Line="300" Column="46" TopLine="272"/>
+        <Caret Line="406" Column="1" TopLine="380"/>
       </Position26>
       <Position27>
-        <Filename Value="uUSBDisplay.pas"/>
-        <Caret Line="25" Column="14" TopLine="8"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="408" Column="1" TopLine="381"/>
       </Position27>
       <Position28>
-        <Filename Value="uUSBDisplay.pas"/>
-        <Caret Line="46" Column="67" TopLine="18"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="421" Column="1" TopLine="406"/>
       </Position28>
       <Position29>
-        <Filename Value="uUSBDisplay.pas"/>
-        <Caret Line="196" Column="17" TopLine="172"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="424" Column="1" TopLine="406"/>
       </Position29>
       <Position30>
-        <Filename Value="uUSBDisplay.pas"/>
-        <Caret Line="200" Column="13" TopLine="172"/>
+        <Filename Value="uMainForm.pas"/>
+        <Caret Line="432" Column="1" TopLine="406"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -642,6 +663,7 @@
     <Linking>
       <Debugging>
         <UseHeaptrc Value="True"/>
+        <StripSymbols Value="True"/>
       </Debugging>
       <Options>
         <Win32>
